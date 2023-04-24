@@ -100,7 +100,7 @@ function settings(str) {
     return obj;
 }
 
-mapboxgl.accessToken = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+mapboxgl.accessToken = process.env.MAPBOX_TOKEN;
 const map = new mapboxgl.Map({
     container: 'map',
     style: settings(region).style,
