@@ -46,7 +46,8 @@ body {
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const region = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
-console.log(region);
+const period = urlParams ? urlParams.get('period') : '';
+console.log(region + ' ' + period);
 
 function titleCase(str) {
   str = str.toLowerCase().split(' ').map(function(word) {
