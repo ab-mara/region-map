@@ -421,7 +421,7 @@ coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
 featureid = e.features[0].id
 map.setFeatureState({source: 'data',id: e.features[0].id},{visiblee:true});
 popupDescr = e.features[0].properties.Description;
-popup.setLngLat(coordinates).setHTML('<p><strong>Date: </strong><br>' + e.features[0].properties.Date + '<br>' + popupDescr.substr(0, 75) + '…<br><a href="' + e.features[0].properties.URL + '" target="_top">View Details</a></p>').addTo(map);
+popup.setLngLat(coordinates).setHTML('<p><strong>Date: </strong>' + e.features[0].properties.Date + '<br>' + '<strong>Description: </strong>' + popupDescr.substr(0, 100) + '…<br><a href="' + e.features[0].properties.URL + '" target="_top">View Details</a></p>').addTo(map);
 
 });
 
