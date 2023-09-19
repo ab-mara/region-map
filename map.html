@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>MARA Region Alert Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <!--Mapbox-->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" type="text/css">
+    <!--Mapbox Geocoder-->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+    <!--jQuery-->
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous">
+    </script>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+    center: [0, 0],
+    zoom: 1
+});
+
+// ... Other map-related code ...
+
+// Fetch data from the Netlify function
+fetch('/.netlify/functions/getIncidents')
+    .then(response => response.json())
+    .then(data => {
+        // Process the data and add map features as needed
+        // Example: Loop through data and add map markers
+        data.features.forEach(feature => {
+            const coordinates = feature.geometry.coordinates;
+            const description = feature.properties.Description;
+
+            // Create a map marker using coordinates and description
+            const marker = new mapboxgl.Marker()
+                .setLngLat(coordinates)
+                .setPopup(new mapboxgl.Popup().setHTML(description))
+                .addTo(map);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+    });
+</script>
+
+</body>
+</html>
