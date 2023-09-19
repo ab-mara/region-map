@@ -33,7 +33,7 @@ const map = new mapboxgl.Map({
 // ... Other map-related code ...
 
 // Fetch data from the Netlify function
-fetch('.netlify/functions/getIncidents')
+fetch('/netlify/functions/getIncidents')
     .then(response => response.json())
     .then(data => {
         // Process the data and add map features as needed
