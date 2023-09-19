@@ -7,7 +7,7 @@ exports.handler = async (event, context) => {
     // Initialize a connection pool to your PostgreSQL database
     const pool = new Pool({
       connectionString:
-        "postgresql://postgres.sync_57Oqlcw3:o22Oek4XrSRokMLY@proxy.sequindb.io:5432/postgres",
+        "postgresql://postgres:o22Oek4XrSRokMLY@db.txtsljlkvthdlxjesaam.supabase.co:5432/postgres",
     });
 
     // Query the database for incident data
