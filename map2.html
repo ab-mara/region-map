@@ -52,6 +52,8 @@
                 });
 
                 const incidentTypes = await response.json();
+                console.log('Incident types:', incidentTypes);
+                
                 const typeDictionary = {};
 
                 incidentTypes.forEach(type => {
