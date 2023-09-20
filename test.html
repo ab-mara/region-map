@@ -144,6 +144,7 @@ async function fetchData() {
         }
 
         const data = await response.json();
+        console.log(data);
 
         data.forEach(record => {
             const itemLatLongsplit = record.Position.split(",");
