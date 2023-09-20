@@ -35,7 +35,7 @@
                     container: 'map', // HTML element ID
                     style: 'mapbox://styles/mapbox/streets-v11', // Map style
                     center: [0, 0], // Initial center coordinates (longitude, latitude)
-                    zoom: 2, // Initial zoom level
+                    zoom: 2 // Initial zoom level
                 });
 
                 // Function to fetch incident types and store them in a dictionary
@@ -45,8 +45,8 @@
                             headers: {
                                 'apikey': SUPABASE_API_KEY,
                                 'Authorization': `Bearer ${SUPABASE_API_KEY}`,
-                                'Accept-Profile': 'airtable',
-                            },
+                                'Accept-Profile': 'airtable'
+                            }
                         });
 
                         const incidentTypes = await response1.json();
@@ -76,8 +76,8 @@
                             headers: {
                                 'apikey': SUPABASE_API_KEY,
                                 'Authorization': `Bearer ${SUPABASE_API_KEY}`,
-                                'Accept-Profile': 'airtable',
-                            },
+                                'Accept-Profile': 'airtable'
+                            }
                         });
 
                         // Parse the JSON response
@@ -89,7 +89,7 @@
                             if (latitude && longitude) {
                                 const incidentTypeColor = typeDictionary[type];
                                 console.log(incidentTypeColor);
-                                
+
                                 new mapboxgl.Marker({ color: incidentTypeColor })
                                     .setLngLat([longitude, latitude])
                                     .addTo(map);
