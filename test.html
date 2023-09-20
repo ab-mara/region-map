@@ -207,6 +207,194 @@ async function fetchData() {
         });
 
         // Add map layers, interactions, and controls as before
+
+map.addLayer({
+id: 'clusters',
+type: 'circle',
+source: 'data',
+filter: ['has', 'point_count'],
+paint: {
+'circle-color': [
+'step',
+['get', 'point_count'],
+'#a6a6a6', 20,'#828282', 40,'#5f5f60', 60,'#3f3f40', 100,'#212122'
+],
+'circle-radius': [
+'step',
+['get', 'point_count'],
+20, 20,22, 40,25, 60,30, 100,35
+]
+}
+});
+ 
+map.addLayer({
+id: 'cluster-count',
+type: 'symbol',
+source: 'data',
+filter: ['has', 'point_count'],
+layout: {
+'text-field': '{point_count_abbreviated}',
+'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+'text-size': 12,
+'text-allow-overlap': true
+},
+paint: {
+    'text-color': [
+'step',
+['get', 'point_count'],
+'#000000', 60,'#ffffff'
+],}
+});
+ 
+map.addLayer({
+id: 'unclustered-point',
+type: 'circle',
+source: 'data',
+filter: ['!', ['has', 'point_count']],
+paint: {
+    'circle-radius': {
+    'base': 3.75,
+    'stops': [
+    [4, 7],
+    [15, 90]
+    ]
+    },
+    'circle-color': [
+    'match',
+    ['get', 'Type'],
+    'Piracy','#F82B60', 
+    'Sighting', 
+    '#FF6F2C', 
+    'Smuggling', 
+    '#20C933', 
+    'Suspicious Approach', 
+    '#FF6F2C', 
+    'Other', 
+    '#2D7FF9', 
+    'Military Action', 
+    '#F82B60', 
+    '#ff0000'
+    ],
+}
+});
+
+map.on('click', 'clusters', (e) => {
+const features = map.queryRenderedFeatures(e.point, {
+layers: ['clusters']
+});
+const clusterId = features[0].properties.cluster_id;
+map.getSource('data').getClusterExpansionZoom(
+clusterId,
+(err, zoom) => {
+if (err) return;
+ 
+map.easeTo({
+center: features[0].geometry.coordinates,
+zoom: zoom
+});
+}
+);
+});
+
+const popup = new mapboxgl.Popup({
+    //closeButton: false,
+    //closeOnClick: false,
+    className: 'popups'
+});
+
+map.on('mouseenter', 'unclustered-point', (e) => {
+map.getCanvas().style.cursor = 'pointer';
+const coordinates = e.features[0].geometry.coordinates.slice();
+
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+featureid = e.features[0].id
+map.setFeatureState({source: 'data',id: e.features[0].id},{visiblee:true});
+popupDescr = e.features[0].properties.Description;
+popup.setLngLat(coordinates).setHTML('<p><strong>Date: </strong>' + e.features[0].properties.Date + '<br>' + '<strong>Description: </strong>' + popupDescr.substr(0, 125) + '…<br><a href="' + e.features[0].properties.URL + '" target="_top">View Details</a></p>').addTo(map);
+
+});
+
+map.on('mouseleave', 'unclustered-point', (e) => {
+map.getCanvas().style.cursor = '';
+
+map.setFeatureState({source: 'data',id: featureid},{visiblee:false});
+//popup.remove();
+
+});
+
+const easingFunctions = {
+// start slow and gradually increase speed
+easeInCubic: function (t) {
+return t * t * t;
+},
+// start fast with a long, slow wind-down
+easeOutQuint: function (t) {
+return 1 - Math.pow(1 - t, 5);
+},
+// slow start and finish with fast middle
+easeInOutCirc: function (t) {
+return t < 0.5
+? (1 - Math.sqrt(1 - Math.pow(2 * t, 2))) / 2
+: (Math.sqrt(1 - Math.pow(-2 * t + 2, 2)) + 1) / 2;
+},
+// fast start with a "bounce" at the end
+easeOutBounce: function (t) {
+const n1 = 7.5625;
+const d1 = 2.75;
+ 
+if (t < 1 / d1) {
+return n1 * t * t;
+} else if (t < 2 / d1) {
+return n1 * (t -= 1.5 / d1) * t + 0.75;
+} else if (t < 2.5 / d1) {
+return n1 * (t -= 2.25 / d1) * t + 0.9375;
+} else {
+return n1 * (t -= 2.625 / d1) * t + 0.984375;
+}
+}
+};
+
+const easingFn = easingFunctions['easeOutQuint'];
+
+map.on('click', 'unclustered-point', (e) => {
+const coordinates = e.features[0].geometry.coordinates.slice();
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+
+features1 = map.querySourceFeatures('data');
+
+for (let i = 0; i <= features1.length-1; i++) {
+    map.setFeatureState({source: 'data',id: features1[i].id},{visiblee1:false});
+}
+
+featureid = e.features[0].id
+map.setFeatureState({source: 'data',id: e.features[0].id},{visiblee1:true});
+
+map.flyTo({
+center: coordinates,
+duration: 2000,
+easing: easingFn,
+animate: true,
+curve:2,
+essential: true
+});
+
+urlsplit = e.features[0].properties.URL.split(",");
+urls='';
+
+});
+
+ 
+map.on('mouseenter', 'clusters', () => {
+map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'clusters', () => {
+map.getCanvas().style.cursor = '';
+});
+
         // ...
     } catch (error) {
         console.error('Error fetching data:', error);
