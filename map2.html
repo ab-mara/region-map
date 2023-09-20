@@ -55,7 +55,7 @@
                 const typeDictionary = {};
 
                 incidentTypes.forEach(type => {
-                    typeDictionary[type.id] = type; // Assuming "id" is the primary key in the alert_types table
+                    typeDictionary[type.Name] = type.Color; // Assuming "Name" and "Color" are the relevant columns in the alert_types table
                 });
 
                 return typeDictionary;
@@ -89,8 +89,8 @@
                         features: data.map(item => {
                             const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
                             if (latitude && longitude) {
-                                const incidentType = typeDictionary[type]; // Get incident type information
-                                if (incidentType) {
+                                const incidentTypeColor = typeDictionary[type];
+                                if (incidentTypeColor) {
                                     return {
                                         type: 'Feature',
                                         geometry: {
@@ -102,7 +102,7 @@
                                             date,
                                             region,
                                             type,
-                                            'marker-color': incidentType.color, // Set marker color based on incident type
+                                            'marker-color': incidentTypeColor, // Set marker color based on incident type color
                                         },
                                     };
                                 }
