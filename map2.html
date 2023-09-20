@@ -71,6 +71,7 @@
             try {
                 // Fetch incident types and store them in a dictionary
                 const typeDictionary = await fetchIncidentTypes();
+                console.log('Incident type dictionary:', typeDictionary);
 
                 // Fetch incident data
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
@@ -90,7 +91,7 @@
                     data: {
                         type: 'FeatureCollection',
                         features: data.map(item => {
-                            const { latitude, longitude, description, date } = item; // Replace with your column names
+                            const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
                             if (latitude && longitude) {
                                 const incidentTypeColor = typeDictionary[type];
                                 if (incidentTypeColor) {
