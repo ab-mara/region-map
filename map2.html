@@ -89,6 +89,7 @@
                             if (latitude && longitude) {
                                 const incidentTypeColor = typeDictionary[type];
                                 console.log(incidentTypeColor);
+                                
                                 new mapboxgl.Marker({ color: incidentTypeColor })
                                     .setLngLat([longitude, latitude])
                                     .addTo(map);
