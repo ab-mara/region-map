@@ -90,7 +90,7 @@
                     data: {
                         type: 'FeatureCollection',
                         features: data.map(item => {
-                            const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
+                            const { latitude, longitude, description, date } = item; // Replace with your column names
                             if (latitude && longitude) {
                                 const incidentTypeColor = typeDictionary[type];
                                 if (incidentTypeColor) {
