@@ -27,16 +27,17 @@
         // Replace with your Supabase URL and API key
         const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
         const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
+        const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
 
         // Initialize Mapbox with your access token
-        mapboxgl.accessToken = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+        mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
         // Create a map instance
         const map = new mapboxgl.Map({
             container: 'map', // HTML element ID
             style: 'mapbox://styles/mapbox/streets-v11', // Map style
             center: [0, 0], // Initial center coordinates (longitude, latitude)
-            zoom: 16, // Initial zoom level
+            zoom: 22, // Initial zoom level
         });
 
         // Function to fetch data from Supabase and add markers to the map
