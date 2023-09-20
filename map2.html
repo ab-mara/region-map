@@ -41,7 +41,7 @@
                 // Function to fetch incident types and store them in a dictionary
                 async function fetchIncidentTypes() {
                     try {
-                        const response = await fetch(`${SUPABASE_URL}/rest/v1/alert_types`, {
+                        const response1 = await fetch(`${SUPABASE_URL}/rest/v1/alert_types`, {
                             headers: {
                                 'apikey': SUPABASE_API_KEY,
                                 'Authorization': `Bearer ${SUPABASE_API_KEY}`,
@@ -49,7 +49,7 @@
                             },
                         });
 
-                        const incidentTypes = await response.json();
+                        const incidentTypes = await response1.json();
                         const typeDictionary = {};
 
                         incidentTypes.forEach(type => {
@@ -70,7 +70,7 @@
                         console.log(typeDictionary);
 
                         // Make a request to your Supabase endpoint
-                        const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
+                        const response2 = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
                             headers: {
                                 'apikey': SUPABASE_API_KEY,
                                 'Authorization': `Bearer ${SUPABASE_API_KEY}`,
@@ -79,7 +79,7 @@
                         });
 
                         // Parse the JSON response
-                        const data = await response.json();
+                        const data = await response2.json();
 
                         // Loop through the data and add markers to the map
                         data.forEach(item => {
