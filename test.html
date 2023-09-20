@@ -157,7 +157,7 @@ async function fetchData() {
                 //const item = regionName.find(item => item[0] === record.region);
                 //const item1 = typeName.find(item => item[0] === record.type);
         
-                text += `{"type": "Feature",
+                /*text += `{"type": "Feature",
                   "geometry": {
                     "type": "Point",
                     "coordinates": [${parseFloat(itemLatLongsplit[1])}, ${parseFloat(itemLatLongsplit[0])}]
@@ -170,6 +170,21 @@ async function fetchData() {
                     "Longitude": "${parseFloat(itemLatLongsplit[1])}",
                     "Latitude": "${parseFloat(itemLatLongsplit[0])}",
                     "Region": "${item[1]}",
+                    "Description": "${description}",
+                    "URL": "${url}"
+                  }
+                },`;*/
+                text += `{"type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [${parseFloat(itemLatLongsplit[1])}, ${parseFloat(itemLatLongsplit[0])}]
+                  },
+                  "properties": {
+                    "ID": "${record.ID}",
+                    "Header": "${header}",
+                    "Date": "${record.Date.substring(0, 10)}",
+                    "Longitude": "${parseFloat(itemLatLongsplit[1])}",
+                    "Latitude": "${parseFloat(itemLatLongsplit[0])}",
                     "Description": "${description}",
                     "URL": "${url}"
                   }
