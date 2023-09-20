@@ -88,7 +88,8 @@
                         data.forEach(item => {
                             const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
                             if (latitude && longitude) {
-                                new mapboxgl.Marker({ color: 'black' })
+                                const incidentTypeColor = typeDictionary[type];
+                                new mapboxgl.Marker({ color: incidentTypeColor })
                                     .setLngLat([longitude, latitude])
                                     .addTo(map);
                             }
