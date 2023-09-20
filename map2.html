@@ -66,9 +66,11 @@
 
         // Function to fetch data from Supabase and add markers to the map
         async function fetchDataAndAddMarkers() {
-            try {
-                // Wait for the map to finish loading
-                map.on('load', async () => {
+            let retryCount = 0;
+            const maxRetries = 3; // Define the maximum number of retries
+
+            async function fetchData() {
+                try {
                     // Fetch incident types and store them in a dictionary
                     const typeDictionary = await fetchIncidentTypes();
 
@@ -131,10 +133,23 @@
                             'circle-color': ['get', 'marker-color'], // Use the 'marker-color' property from the data
                         },
                     });
-                });
-            } catch (error) {
-                console.error('Error fetching and adding markers:', error);
+                } catch (error) {
+                    console.error('Error fetching and adding markers:', error);
+
+                    // Retry the fetch operation up to the maximum number of retries
+                    if (retryCount < maxRetries) {
+                        retryCount++;
+                        console.log(`Retrying fetch (attempt ${retryCount})...`);
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for a short interval before retrying
+                        await fetchData();
+                    } else {
+                        console.error('Max retries reached. Unable to fetch data.');
+                    }
+                }
             }
+
+            // Start fetching data
+            fetchData();
         }
 
         // Call the fetchDataAndAddMarkers function to populate the map with markers
