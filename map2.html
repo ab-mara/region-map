@@ -56,7 +56,7 @@
 
                         incidentTypes.forEach(type => {
                             typeDictionary[type.name] = type.color || "#808080"; // Assuming "Name" and "Color" are the relevant columns in the alert_types table
-                            console.log(typeDictionary);
+                            //console.log(typeDictionary);
                         });
 
                         return typeDictionary;
@@ -70,7 +70,7 @@
                     try {
                         // Fetch incident types and store them in a dictionary
                         const typeDictionary = await fetchIncidentTypes();
-                        console.log(typeDictionary);
+                        //console.log(typeDictionary);
 
                         // Make a request to your Supabase endpoint
                         const response2 = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
@@ -89,6 +89,7 @@
                             const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
                             if (latitude && longitude) {
                                 const incidentTypeColor = typeDictionary[type];
+                                console.log(incidentTypeColor);
                                 new mapboxgl.Marker({ color: incidentTypeColor })
                                     .setLngLat([longitude, latitude])
                                     .addTo(map);
