@@ -83,7 +83,7 @@
 
                 // Loop through the data and add markers to the map
                 data.forEach(item => {
-                    const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
+                    const { latitude, longitude, description, date } = item; // Replace with your column names
                     if (latitude && longitude) {
                         const incidentType = typeDictionary[type]; // Get incident type information
                         if (incidentType) {
