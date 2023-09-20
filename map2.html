@@ -53,7 +53,7 @@
 
                 const incidentTypes = await response.json();
                 console.log('Incident types:', incidentTypes);
-                
+
                 const typeDictionary = {};
 
                 incidentTypes.forEach(type => {
@@ -82,6 +82,7 @@
                 });
 
                 const data = await response.json();
+                console.log('Incident data:', data);
 
                 // Add a source for the data
                 map.addSource('data', {
