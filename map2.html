@@ -88,7 +88,7 @@
                         data.forEach(item => {
                             const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
                             if (latitude && longitude) {
-                                new mapboxgl.Marker()
+                                new mapboxgl.Marker({ color: 'black' })
                                     .setLngLat([longitude, latitude])
                                     .addTo(map);
                             }
