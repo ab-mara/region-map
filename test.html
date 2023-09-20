@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>MARA Region Alert Map Test</title>
+<title>MARA Region Alert Map</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 <!--Mapbox-->
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
@@ -125,70 +125,77 @@ $(".mapboxgl-ctrl-bottom-left").remove();
 
 var text = `{"type" : "FeatureCollection", "features": [`;
 
-// Initialize Supabase
+// Supabase API URL and key
 const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
 const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
-const supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY);
 
-// Fetch data from Supabase
-supabase
-  .from('incidents')
-  .select()
-  .then(({ data, error }) => {
-    if (error) {
-      console.error(error);
-      return;
+async function fetchData() {
+    try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
+            headers: {
+                'apikey': SUPABASE_API_KEY,
+                'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+                'Accept-Profile': 'airtable',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+
+        data.forEach(record => {
+            const itemLatLongsplit = record.Position.split(",");
+
+            if (record.Position) {
+                const description = record['Description Trimmed'] ? record['Description Trimmed'].replace(/(\r\n|\n|\r)/gm,"").replaceAll(`"`,`'`).replaceAll(`\\`,``) : '';
+                const header = record.Header ? record.Header.replace(/(\r\n|\n|\r)/gm,"").replaceAll(`"`,`'`) : '';
+                const url = record['Details URL Absolute'] ? record['Details URL Absolute'].replace(/[\r\n]+/g," ") : '';
+        
+                const item = regionName.find(item => item[0] === record.Region);
+                const item1 = typeName.find(item => item[0] === record.Type);
+        
+                text += `{"type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [${parseFloat(itemLatLongsplit[1])}, ${parseFloat(itemLatLongsplit[0])}]
+                  },
+                  "properties": {
+                    "ID": "${record.ID}",
+                    "Header": "${header}",
+                    "Type": "${item1[1]}",
+                    "Date": "${record.Date.substring(0, 10)}",
+                    "Longitude": "${parseFloat(itemLatLongsplit[1])}",
+                    "Latitude": "${parseFloat(itemLatLongsplit[0])}",
+                    "Region": "${item[1]}",
+                    "Description": "${description}",
+                    "URL": "${url}"
+                  }
+                },`;
+            }
+        });
+
+        // Add the retrieved data to the map
+        text1 = text.substring(0, text.length - 1)
+        text1 += `]}`;
+        obj = JSON.parse(text1);
+        
+        map.addSource('data', {
+          type: 'geojson',
+          data: obj,
+          cluster: true,
+          generateId: true,
+          clusterMaxZoom: 5,
+          clusterRadius: 40
+        });
+
+        // Add map layers, interactions, and controls as before
+        // ...
+    } catch (error) {
+        console.error('Error fetching data:', error);
     }
-
-    data.forEach(record => {
-      const itemLatLongsplit = record.Position.split(",");
-
-      if (record.Position) {
-        // Process and format Supabase data as needed
-        const description = record['Description Trimmed'] ? record['Description Trimmed'].replace(/(\r\n|\n|\r)/gm,"").replaceAll(`"`,`'`).replaceAll(`\\`,``) : '';
-        const header = record.Header ? record.Header.replace(/(\r\n|\n|\r)/gm,"").replaceAll(`"`,`'`) : '';
-        const url = record['Details URL Absolute'] ? record['Details URL Absolute'].replace(/[\r\n]+/g," ") : '';
-
-        const item = regionName.find(item => item[0] === record.Region);
-        const item1 = typeName.find(item => item[0] === record.Type);
-
-        text += `{"type": "Feature",
-          "geometry": {
-            "type": "Point",
-            "coordinates": [${parseFloat(itemLatLongsplit[1])}, ${parseFloat(itemLatLongsplit[0])}]
-          },
-          "properties": {
-            "ID": "${record.ID}",
-            "Header": "${header}",
-            "Type": "${item1[1]}",
-            "Date": "${record.Date.substring(0, 10)}",
-            "Longitude": "${parseFloat(itemLatLongsplit[1])}",
-            "Latitude": "${parseFloat(itemLatLongsplit[0])}",
-            "Region": "${item[1]}",
-            "Description": "${description}",
-            "URL": "${url}"
-          }
-        },`
-      }
-    });
-
-    // Add the retrieved data to the map
-    text1 = text.substring(0, text.length - 1)
-    text1 += `]}`;
-    obj = JSON.parse(text1);
-    
-    map.addSource('data', {
-      type: 'geojson',
-      data: obj,
-      cluster: true,
-      generateId: true,
-      clusterMaxZoom: 5,
-      clusterRadius: 40
-    });
-
-    // Add map layers, interactions, and controls as before
-    // ...
-  });
+}
 
 map.loadImage('./mapbox-marker-icon-20px-purple.png', (error, image) => {
   if (error) throw error;
@@ -198,6 +205,9 @@ map.loadImage('./mapbox-marker-icon-20px-purple.png', (error, image) => {
   
   // Add map layers and interactions as before
   // ...
+
+  // Fetch data from Supabase
+  fetchData();
 });
 
 // Rest of your code
