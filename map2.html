@@ -57,7 +57,7 @@
 
                 // Loop through the data and add markers to the map
                 data.forEach(item => {
-                    const { latitude, longitude } = item; // Replace with your column names
+                    const { latitude, longitude, description, date } = item; // Replace with your column names
                     if (latitude && longitude) {
                         new mapboxgl.Marker()
                             .setLngLat([longitude, latitude])
