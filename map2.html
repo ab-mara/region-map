@@ -88,9 +88,15 @@
                         data.forEach(item => {
                             const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
                             if (latitude && longitude) {
-                                new mapboxgl.Marker()
-                                    .setLngLat([longitude, latitude])
-                                    .addTo(map);
+                                const incidentType = typeDictionary[type]; // Get incident type information
+                                if (incidentType) {
+                                    const marker = new mapboxgl.Marker()
+                                        .setLngLat([longitude, latitude])
+                                        .addTo(map);
+
+                                    // Set marker color based on incident type (assuming you have a "color" property in alert_types)
+                                    marker.getElement().style.backgroundColor = incidentType.color;
+                                }
                             }
                         });
                     } catch (error) {
