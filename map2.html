@@ -110,23 +110,58 @@
                             return null;
                         }).filter(feature => feature !== null), // Filter out null features
                     },
+                    cluster: true, // Enable clustering
+                    clusterMaxZoom: 14, // Max zoom level for clustering
+                    clusterRadius: 50, // Cluster radius in pixels
                 });
 
-                // Add the layer for unclustered points with custom colors
+                // Add the layer for clustered points
                 map.addLayer({
-                    id: 'unclustered-point',
+                    id: 'clusters',
                     type: 'circle',
                     source: 'data',
-                    filter: ['!', ['has', 'point_count']],
+                    filter: ['has', 'point_count'],
                     paint: {
-                        'circle-radius': {
-                            'base': 3.75,
-                            'stops': [
-                                [4, 7],
-                                [15, 90],
-                            ],
-                        },
-                        'circle-color': ['get', 'marker-color'], // Use the 'marker-color' property from the data
+                        'circle-color': [
+                            'step',
+                            ['get', 'point_count'],
+                            '#a6a6a6', 20,
+                            '#828282', 40,
+                            '#5f5f60', 60,
+                            '#3f3f40', 100,
+                            '#212122',
+                        ],
+                        'circle-radius': [
+                            'step',
+                            ['get', 'point_count'],
+                            20, 20,
+                            22, 40,
+                            25, 60,
+                            30, 100,
+                            35,
+                        ],
+                    },
+                });
+
+                // Add the layer for cluster count labels
+                map.addLayer({
+                    id: 'cluster-count',
+                    type: 'symbol',
+                    source: 'data',
+                    filter: ['has', 'point_count'],
+                    layout: {
+                        'text-field': '{point_count_abbreviated}',
+                        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                        'text-size': 12,
+                        'text-allow-overlap': true,
+                    },
+                    paint: {
+                        'text-color': [
+                            'step',
+                            ['get', 'point_count'],
+                            '#000000', 60,
+                            '#ffffff',
+                        ],
                     },
                 });
             } catch (error) {
