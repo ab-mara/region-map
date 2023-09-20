@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapbox Marker Display</title>
+    <!-- Include Mapbox GL JS library -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+    <!-- Include Supabase JavaScript library (if needed) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1"></script> -->
+    <!-- Add your CSS styles here -->
+    <style>
+        /* Set the map's container size */
+        #map {
+            width: 100%;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Create a container for the map -->
+    <div id="map"></div>
+
+    <!-- Include your JavaScript code here -->
+    <script>
+        // Replace with your Supabase URL and API key
+        const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
+        const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
+
+        // Initialize Mapbox with your access token
+        mapboxgl.accessToken = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+
+        // Create a map instance
+        const map = new mapboxgl.Map({
+            container: 'map', // HTML element ID
+            style: 'mapbox://styles/mapbox/streets-v11', // Map style
+            center: [0, 0], // Initial center coordinates (longitude, latitude)
+            zoom: 10, // Initial zoom level
+        });
+
+        // Function to fetch data from Supabase and add markers to the map
+        async function fetchDataAndAddMarkers() {
+            try {
+                // Make a request to your Supabase endpoint
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
+                    headers: {
+                        'apikey': SUPABASE_API_KEY,
+                        'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+                        'Accept-Profile': 'airtable',
+                    },
+                });
+
+                // Parse the JSON response
+                const data = await response.json();
+
+                // Loop through the data and add markers to the map
+                data.forEach(item => {
+                    const { latitude, longitude } = item; // Replace with your column names
+                    if (latitude && longitude) {
+                        new mapboxgl.Marker()
+                            .setLngLat([longitude, latitude])
+                            .addTo(map);
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching and adding markers:', error);
+            }
+        }
+
+        // Call the fetchDataAndAddMarkers function to populate the map with markers
+        fetchDataAndAddMarkers();
+    </script>
+</body>
+</html>
