@@ -55,7 +55,7 @@
                         const typeDictionary = {};
 
                         incidentTypes.forEach(type => {
-                            typeDictionary[type.Name] = type.Color; // Assuming "Name" and "Color" are the relevant columns in the alert_types table
+                            typeDictionary[type.name] = type.color; // Assuming "Name" and "Color" are the relevant columns in the alert_types table
                             console.log(typeDictionary);
                         });
 
