@@ -37,7 +37,7 @@
             container: 'map', // HTML element ID
             style: 'mapbox://styles/mapbox/streets-v11', // Map style
             center: [0, 0], // Initial center coordinates (longitude, latitude)
-            zoom: 10, // Initial zoom level
+            zoom: 10, // Initial zoom level (adjust as needed)
         });
 
         // Function to fetch incident types and store them in a dictionary
@@ -67,67 +67,70 @@
         // Function to fetch data from Supabase and add markers to the map
         async function fetchDataAndAddMarkers() {
             try {
-                // Fetch incident types and store them in a dictionary
-                const typeDictionary = await fetchIncidentTypes();
+                // Wait for the map to finish loading
+                map.on('load', async () => {
+                    // Fetch incident types and store them in a dictionary
+                    const typeDictionary = await fetchIncidentTypes();
 
-                // Fetch incident data
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
-                    headers: {
-                        'apikey': SUPABASE_API_KEY,
-                        'Authorization': `Bearer ${SUPABASE_API_KEY}`,
-                        'Accept-Profile': 'airtable',
-                    },
-                });
-
-                const data = await response.json();
-
-                // Add a source for the data
-                map.addSource('data', {
-                    type: 'geojson',
-                    data: {
-                        type: 'FeatureCollection',
-                        features: data.map(item => {
-                            const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
-                            if (latitude && longitude) {
-                                const incidentTypeColor = typeDictionary[type];
-                                if (incidentTypeColor) {
-                                    return {
-                                        type: 'Feature',
-                                        geometry: {
-                                            type: 'Point',
-                                            coordinates: [longitude, latitude],
-                                        },
-                                        properties: {
-                                            description,
-                                            date,
-                                            region,
-                                            type,
-                                            'marker-color': incidentTypeColor, // Set marker color based on incident type color
-                                        },
-                                    };
-                                }
-                            }
-                            return null;
-                        }).filter(feature => feature !== null), // Filter out null features
-                    },
-                });
-
-                // Add the layer for unclustered points with custom colors
-                map.addLayer({
-                    id: 'unclustered-point',
-                    type: 'circle',
-                    source: 'data',
-                    filter: ['!', ['has', 'point_count']],
-                    paint: {
-                        'circle-radius': {
-                            'base': 3.75,
-                            'stops': [
-                                [4, 7],
-                                [15, 90],
-                            ],
+                    // Fetch incident data
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
+                        headers: {
+                            'apikey': SUPABASE_API_KEY,
+                            'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+                            'Accept-Profile': 'airtable',
                         },
-                        'circle-color': ['get', 'marker-color'], // Use the 'marker-color' property from the data
-                    },
+                    });
+
+                    const data = await response.json();
+
+                    // Add a source for the data
+                    map.addSource('data', {
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: data.map(item => {
+                                const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
+                                if (latitude && longitude) {
+                                    const incidentTypeColor = typeDictionary[type];
+                                    if (incidentTypeColor) {
+                                        return {
+                                            type: 'Feature',
+                                            geometry: {
+                                                type: 'Point',
+                                                coordinates: [longitude, latitude],
+                                            },
+                                            properties: {
+                                                description,
+                                                date,
+                                                region,
+                                                type,
+                                                'marker-color': incidentTypeColor, // Set marker color based on incident type color
+                                            },
+                                        };
+                                    }
+                                }
+                                return null;
+                            }).filter(feature => feature !== null), // Filter out null features
+                        },
+                    });
+
+                    // Add the layer for unclustered points with custom colors
+                    map.addLayer({
+                        id: 'unclustered-point',
+                        type: 'circle',
+                        source: 'data',
+                        filter: ['!', ['has', 'point_count']],
+                        paint: {
+                            'circle-radius': {
+                                'base': 3.75,
+                                'stops': [
+                                    [4, 7],
+                                    [15, 90],
+                                ],
+                            },
+                            'circle-color': ['get', 'marker-color'], // Use the 'marker-color' property from the data
+                        },
+                    });
                 });
             } catch (error) {
                 console.error('Error fetching and adding markers:', error);
@@ -136,6 +139,7 @@
 
         // Call the fetchDataAndAddMarkers function to populate the map with markers
         fetchDataAndAddMarkers();
+
     </script>
 </body>
 </html>
