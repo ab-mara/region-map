@@ -81,22 +81,53 @@
 
                 const data = await response.json();
 
-                // Loop through the data and add markers to the map
-                data.forEach(item => {
-                    const { latitude, longitude, description, date } = item; // Replace with your column names
-                    if (latitude && longitude) {
-                        const incidentType = typeDictionary[type]; // Get incident type information
-                        if (incidentType) {
-                            const marker = new mapboxgl.Marker({
-                                color: incidentType.color
-                                })
-                                .setLngLat([longitude, latitude])
-                                .addTo(map);
+                // Add a source for the data
+                map.addSource('data', {
+                    type: 'geojson',
+                    data: {
+                        type: 'FeatureCollection',
+                        features: data.map(item => {
+                            const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
+                            if (latitude && longitude) {
+                                const incidentType = typeDictionary[type]; // Get incident type information
+                                if (incidentType) {
+                                    return {
+                                        type: 'Feature',
+                                        geometry: {
+                                            type: 'Point',
+                                            coordinates: [longitude, latitude],
+                                        },
+                                        properties: {
+                                            description,
+                                            date,
+                                            region,
+                                            type,
+                                            'marker-color': incidentType.color, // Set marker color based on incident type
+                                        },
+                                    };
+                                }
+                            }
+                            return null;
+                        }).filter(feature => feature !== null), // Filter out null features
+                    },
+                });
 
-                            // Set marker color based on incident type (assuming you have a "color" property in alert_types)
-                            //marker.getElement().style.backgroundColor = incidentType.color;
-                        }
-                    }
+                // Add the layer for unclustered points with custom colors
+                map.addLayer({
+                    id: 'unclustered-point',
+                    type: 'circle',
+                    source: 'data',
+                    filter: ['!', ['has', 'point_count']],
+                    paint: {
+                        'circle-radius': {
+                            'base': 3.75,
+                            'stops': [
+                                [4, 7],
+                                [15, 90],
+                            ],
+                        },
+                        'circle-color': ['get', 'marker-color'], // Use the 'marker-color' property from the data
+                    },
                 });
             } catch (error) {
                 console.error('Error fetching and adding markers:', error);
