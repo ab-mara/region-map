@@ -73,7 +73,7 @@ const fetchRegion = async () => {
   const { data, error } = await supabase
   .from('incidents')
   .select('region, regions!inner(*)')
-  .eq('regions.name', 'Europe')
+  .eq('regions.name', regionName)
   if (error) console.log('error', error)
   console.log('data', data)
 }
