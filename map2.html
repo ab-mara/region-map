@@ -28,7 +28,7 @@
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const regionName = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
-        console.log(regionName);
+        console.log("Region: " + titleCase(regionName));
 
         function titleCase(str) {
         str = str.toLowerCase().split(' ').map(function(word) {
