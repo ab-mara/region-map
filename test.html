@@ -77,26 +77,157 @@ async function fetchRegionData(regionName) {
 
 // Function to get location settings
 function getLocationSettings(location) {
-    const locationSettings = {
-        'indian ocean': {
-            style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
-            center: [57.79394769437804, 14.82233465297636],
-            zoom: 4
-        },
-        // ... (add other locations here)
-        'default': {
-            style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
-            center: [0, 0],
-            zoom: 1
-        }
-    };
+  const locationSettings = {
+    'indian ocean': {
+      style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+      center: [57.79394769437804, 14.82233465297636],
+      zoom: 4
+    },
+    'west africa': {
+      style: 'mapbox://styles/mara-admin/cldk38k54001y01oqwa51ub4e',
+      center: [5.18485323153175, 1.0727315127537915],
+      zoom: 4
+    },
+    'southeast asia': {
+      style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+      center: [104.07224145349453, 1.3925672730413832],
+      zoom: 4
+    },
+    'americas': {
+      style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+      center: [-72.966695, 11.953412],
+      zoom: 4
+    },
+    'europe': {
+      style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+      center: [23.7015295592436, 38.03676783844519],
+      zoom: 3.5
+    },
+    'default': {
+      style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+      center: [0, 0],
+      zoom: 1
+    }
+  };
 
-    return locationSettings[location] || locationSettings['default'];
+  return locationSettings[location] || locationSettings['default'];
 }
 
 // Function to add map layers
 function addMapLayers(map) {
-    // ... (your existing map layer code)
+    mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+
+    map.addLayer({
+        id: 'clusters',
+        type: 'circle',
+        source: 'data',
+        filter: ['has', 'point_count'],
+        paint: {
+            'circle-color': [
+                'step',
+                ['get', 'point_count'],
+                '#a6a6a6', 20, '#828282', 40, '#5f5f60', 60, '#3f3f40', 100, '#212122'
+            ],
+            'circle-radius': [
+                'step',
+                ['get', 'point_count'],
+                20, 20, 22, 40, 25, 60, 30, 100, 35
+            ]
+        }
+    });
+
+    map.addLayer({
+        id: 'cluster-count',
+        type: 'symbol',
+        source: 'data',
+        filter: ['has', 'point_count'],
+        layout: {
+            'text-field': '{point_count_abbreviated}',
+            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+            'text-size': 12,
+            'text-allow-overlap': true
+        },
+        paint: {
+            'text-color': [
+                'step',
+                ['get', 'point_count'],
+                '#000000', 60, '#ffffff'
+            ]
+        }
+    });
+
+    map.addLayer({
+        id: 'unclustered-point',
+        type: 'circle',
+        source: 'data',
+        filter: ['!', ['has', 'point_count']],
+        paint: {
+            'circle-radius': {
+                'base': 3.75,
+                'stops': [
+                    [4, 7],
+                    [15, 90]
+                ]
+            },
+            'circle-color': [
+                'match',
+                ['get', 'Type'],
+                'Piracy', '#F82B60',
+                'Sighting', '#FF6F2C',
+                'Smuggling', '#20C933',
+                'Suspicious Approach', '#FF6F2C',
+                'Other', '#2D7FF9',
+                'Military Action', '#F82B60',
+                '#ff0000'
+            ],
+        }
+    });
+
+    // Add your existing event listeners here
+    map.on('click', 'clusters', (e) => {
+        // Handle cluster click
+        // ...
+
+        // Example: Show a popup on cluster click
+        const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+        const clusterId = features[0].properties.cluster_id;
+        map.getSource('data').getClusterExpansionZoom(clusterId, (err, zoom) => {
+            if (err) return;
+            map.flyTo({ center: features[0].geometry.coordinates, zoom: zoom });
+        });
+    });
+
+    map.on('mouseenter', 'unclustered-point', (e) => {
+        // Handle unclustered point mouseenter
+        // ...
+
+        // Example: Show a popup on unclustered point mouseenter
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        // Create and display a popup with details
+        const popup = new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML('<p>Popup content here</p>')
+            .addTo(map);
+    });
+
+    map.on('mouseleave', 'unclustered-point', (e) => {
+        // Handle unclustered point mouseleave
+        // ...
+
+        // Example: Close the popup on unclustered point mouseleave
+        if (popup.isOpen()) {
+            popup.remove();
+        }
+    });
+
+    map.on('click', 'unclustered-point', (e) => {
+        // Handle unclustered point click
+        // ...
+
+        // Example: Fly to the clicked point on unclustered point click
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        map.flyTo({ center: coordinates, zoom: 8 });
+    });
 }
 
 // Function to fetch data from Supabase and add it to the map
@@ -117,10 +248,50 @@ async function fetchDataAndAddToMap() {
         const data = await response.json();
         console.log(data);
 
-        // ... (your existing data processing code)
+        const geojsonFeatures = [];
 
-        // Add the retrieved data to the map
-        // ... (your existing map data adding code)
+        data.forEach((record) => {
+            const itemLatLongsplit = record.position.split(",");
+            if (record.position) {
+                const description = record['Description Trimmed'] ? record['Description Trimmed'].replace(/(\r\n|\n|\r)/gm,"").replaceAll(`"`,`'`).replaceAll(`\\`,``) : '';
+                const header = record.header ? record.header.replace(/(\r\n|\n|\r)/gm,"").replaceAll(`"`,`'`) : '';
+                const url = record['Details URL Absolute'] ? record['Details URL Absolute'].replace(/[\r\n]+/g," ") : '';
+
+                geojsonFeatures.push({
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [parseFloat(itemLatLongsplit[1]), parseFloat(itemLatLongsplit[0])]
+                    },
+                    properties: {
+                        ID: record.ID,
+                        Header: header,
+                        Date: record.date.substring(0, 10),
+                        Longitude: parseFloat(itemLatLongsplit[1]),
+                        Latitude: parseFloat(itemLatLongsplit[0]),
+                        Description: description,
+                        URL: url
+                    }
+                });
+            }
+        });
+
+        const geojsonObject = {
+            type: 'FeatureCollection',
+            features: geojsonFeatures
+        };
+
+        map.addSource('data', {
+            type: 'geojson',
+            data: geojsonObject,
+            cluster: true,
+            generateId: true,
+            clusterMaxZoom: 5,
+            clusterRadius: 40
+        });
+
+        // Add map layers, interactions, and controls as before
+        addMapLayers(map);
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -139,17 +310,12 @@ function setupMap() {
         zoom: regionSettings.zoom,
     });
 
-    // ... (your existing map setup code)
-
-    // Load custom marker image
-    map.loadImage('./mapbox-marker-icon-20px-purple.png', (error, image) => {
-        if (error) throw error;
-        map.addImage('marker', image, {});
-        map.addImage('marker1', image, {});
-
-        // Add map layers and fetch data from Supabase
+    map.on('load', () => {
+        // Add map layers, interactions, and controls
         addMapLayers(map);
-        fetchDataAndAddToMap();
+
+        // Fetch data from Supabase and add it to the map
+        fetchDataAndAddToMap(map);
     });
 }
 
