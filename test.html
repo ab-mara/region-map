@@ -61,16 +61,6 @@ function getRegionNameFromURL() {
     return urlParams.get('region') ? urlParams.get('region').split('-').join(' ') : 'world';
 }
 
-// Function to fetch region data from Supabase
-const fetchData = async () => {
-    const { data, error } = await supabase
-      .from('incidents')
-      .select('*, regions!inner(*), alert_types!inner(*)')
-      .eq('regions.name', 'Indian Ocean')
-    if (error) console.log('error', error)
-    console.log('Supabase data', data)
-}
-
 // Function to get location settings
 function getLocationSettings(location) {
   const locationSettings = {
@@ -243,7 +233,15 @@ async function fetchDataAndAddToMap(map) {
 
         const data = await response.json();
         console.log("data: ", data);*/
-
+        // Function to fetch region data from Supabase
+        const fetchData = async () => {
+            const { data, error } = await supabase
+              .from('incidents')
+              .select('*, regions!inner(*), alert_types!inner(*)')
+              .eq('regions.name', 'Indian Ocean')
+            if (error) console.log('error', error)
+            console.log('Supabase data', data)
+        }
         fetchData();
 
         const geojsonFeatures = [];
