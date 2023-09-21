@@ -43,6 +43,11 @@ body {
 <div id="map"></div>
 
 <script>
+// Supabase API URL and key
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
+const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
+
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const region = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
@@ -110,7 +115,7 @@ function settings(str) {
     return obj;
 }
 
-mapboxgl.accessToken = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 const map = new mapboxgl.Map({
     container: 'map',
     style: settings(region).style,
@@ -118,16 +123,10 @@ const map = new mapboxgl.Map({
     zoom: settings(region).zoom
 });
 
-console.log(map);
-
 $(".mapboxgl-ctrl-attrib-inner").remove();
 $(".mapboxgl-ctrl-bottom-left").remove();
 
 var text = `{"type" : "FeatureCollection", "features": [`;
-
-// Supabase API URL and key
-const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
-const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
 
 async function fetchData() {
     try {
