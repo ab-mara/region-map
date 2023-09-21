@@ -68,7 +68,7 @@ const fetchRegionData = async () => {
     .select('region, regions!inner(*)')
     .eq('regions.name', 'Indian Ocean')
     if (error) console.log('error', error)
-    console.log('data', data)
+    console.log('Region data', data)
 }
 fetchRegionData()
 
