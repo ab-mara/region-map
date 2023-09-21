@@ -52,6 +52,7 @@ const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const regionName = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
+const regionNameTitleCase = titleCase(regionName);
 //const period = urlParams ? urlParams.get('period') : '';
 //console.log(region + ' ' + period);
 console.log("Region: " + titleCase(regionName));
@@ -73,7 +74,7 @@ const fetchRegion = async () => {
   const { data, error } = await supabase
   .from('incidents')
   .select('region, regions!inner(*)')
-  .eq('regions.name', titleCase(regionName))
+  .eq('regions.name', regionNameTitleCase)
   if (error) console.log('error', error)
   console.log('data', data)
 }
