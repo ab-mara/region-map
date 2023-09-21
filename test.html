@@ -60,14 +60,14 @@ function getRegionNameFromURL() {
     const urlParams = new URLSearchParams(queryString);
     return urlParams.get('region') ? urlParams.get('region').split('-').join(' ') : 'world';
 }
-
+const rgn = getRegionNameFromURL();
 // Function to fetch region data from Supabase
-async function fetchRegionData(regionName) {
+async function fetchRegionData(rgn) {
     try {
         const { data, error } = await supabase
             .from('incidents')
-            .select('region, regions!inner(*)')
-            .eq('regions.name', regionName);
+            .select('*, regions!inner(*), alert_types!inner(*)')
+            .eq('regions.name', rgn);
         if (error) console.log('Error fetching region data:', error);
         console.log('Region data:', data);
     } catch (error) {
@@ -277,7 +277,7 @@ async function fetchDataAndAddToMap(map) {
             }
         });
         console.log("geojsonFeatures: ", geojsonFeatures);
-        
+
         const geojsonObject = {
             type: 'FeatureCollection',
             features: geojsonFeatures
