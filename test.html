@@ -253,9 +253,9 @@ async function fetchDataAndAddToMap(map) {
         data.forEach((record) => {
             const itemLatLongsplit = record.position.split(",");
             if (record.position) {
-                const description = record['Description Trimmed'] ? record['Description Trimmed'].replace(/(\r\n|\n|\r)/gm,"").replaceAll(`"`,`'`).replaceAll(`\\`,``) : '';
-                const header = record.header ? record.header.replace(/(\r\n|\n|\r)/gm,"").replaceAll(`"`,`'`) : '';
-                const url = record['Details URL Absolute'] ? record['Details URL Absolute'].replace(/[\r\n]+/g," ") : '';
+                const description = record.description;
+                const header = record.header;
+                const url = record.details_url_absolute;
 
                 geojsonFeatures.push({
                     type: 'Feature',
