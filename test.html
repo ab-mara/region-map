@@ -213,39 +213,24 @@ function addMapLayers(map) {
 // Function to fetch data from Supabase and add it to the map
 async function fetchDataAndAddToMap(map) {
     try {
-        /*const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
-            headers: {
-                'apikey': SUPABASE_API_KEY,
-                'Authorization': `Bearer ${SUPABASE_API_KEY}`,
-                'Accept-Profile': 'airtable',
-            },
+        // Initialize Supabase client
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
+            db: { schema: 'airtable' }
         });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+        // Function to fetch data from Supabase
+        const { data, error } = await supabaseClient
+            .from('incidents')
+            .select('*, regions!inner(*), alert_types!inner(*)')
+            .eq('regions.name', 'Indian Ocean');
+
+        if (error) {
+            console.error('Supabase error', error);
+            return;
         }
 
-        const data = await response.json();
-        console.log("data: ", data);*/
-
-        // Initialize Supabase client
-        const { createClient } = supabase
-        supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
-          db: { schema: 'airtable' }
-        })
-
-        // Function to fetch data from Supabase
-        const fetchData = async () => {
-            const { data, error } = await supabase
-              .from('incidents')
-              .select('*, regions!inner(*), alert_types!inner(*)')
-              .eq('regions.name', 'Indian Ocean')
-            if (error) console.log('error', error)
-            console.log('Supabase data', data)
-        };
-
-        // Call the fetchData function to retrieve data
-        fetchData();
+        console.log('Supabase data', data);
 
         const geojsonFeatures = [];
 
@@ -275,6 +260,7 @@ async function fetchDataAndAddToMap(map) {
                 });
             }
         });
+
         console.log("geojsonFeatures: ", geojsonFeatures);
 
         const geojsonObject = {
