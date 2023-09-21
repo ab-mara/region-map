@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>MARA Region Alert Map Test Refactored</title>
+<title>MARA Region Alert Map Test</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 <!--Mapbox-->
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
@@ -49,10 +49,10 @@ const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
 const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
 
 // Initialize Supabase client
-const { createClient } = supabase;
-let supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
-    db: { schema: 'airtable' }
-});
+const { createClient } = supabase
+supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
+  db: { schema: 'airtable' }
+})
 
 // Function to get region name from URL
 function getRegionNameFromURL() {
