@@ -222,7 +222,7 @@ async function fetchDataAndAddToMap(map) {
         // Function to fetch data from Supabase
         const { data, error } = await supabaseClient
             .from('incidents')
-            .select('id, latitude, longitude, date, description, header, details_url_absolute, regions!inner(*), alert_types!inner(*)')
+            .select('latitude, longitude, date, description, header, details_url_absolute, regions!inner(*), alert_types!inner(*)')
             .eq('regions.name', 'Indian Ocean');
 
         if (error) {
