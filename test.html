@@ -74,7 +74,7 @@ const fetchRegion = async () => {
   .from('incidents')
   .select('region, regions(name)')
   // Filters
-  .eq('regions.name', regionName)
+  //.cs('regions', ['array', 'contains'])
   if (error) console.log('error', error)
   console.log('data', data)
 }
