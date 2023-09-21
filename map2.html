@@ -86,9 +86,8 @@
 
                         // Loop through the data and add markers to the map
                         data.forEach(item => {
-                            const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
-                            console.log(item);
-                            if (latitude && longitude) {
+                            const { latitude, longitude, description, date, region, type, publish } = item; // Replace with your column names
+                            if (latitude && longitude && publish === true) {
                                 const incidentTypeColor = typeDictionary[type];
                                 console.log(incidentTypeColor);
 
