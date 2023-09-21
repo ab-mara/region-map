@@ -65,7 +65,7 @@ function getRegionNameFromURL() {
 const fetchRegionData = async () => {
     const { data, error } = await supabase
     .from('incidents')
-    .select('region, regions!inner(*)')
+    .select('*, regions!inner(*)')
     .eq('regions.name', 'Indian Ocean')
     if (error) console.log('error', error)
     console.log('Region data', data)
