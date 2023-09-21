@@ -72,7 +72,7 @@ supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
 const fetchRegion = async () => {
   const { data, error } = await supabase
   .from('incidents')
-  .select('region, regions!inner(*)')
+  .select('region, regions!inner(name)')
   .eq('regions.name', 'Europe')
   if (error) console.log('error', error)
   console.log('data', data)
