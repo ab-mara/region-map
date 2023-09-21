@@ -291,9 +291,7 @@ async function fetchDataAndAddToMap(map) {
         });
 
         // Add map layers, interactions, and controls as before
-        map.on('data', () => {
-            addMapLayers(map);
-        });
+        addMapLayers(map);
     } catch (error) {
         console.error('Error fetching data:', error);
     }
