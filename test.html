@@ -56,6 +56,14 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
   db: { schema: 'airtable' }
 })
 
+const fetchRegion = async () => {
+  const { data, error } = await supabase
+  .from('regions')
+  .select('*')
+  if (error) console.log('error', error)
+  console.log('data', data)
+}
+
 
 // Get the region from the URL
 const queryString = window.location.search;
