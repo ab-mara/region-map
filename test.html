@@ -393,11 +393,12 @@ map.setFeatureState({source: 'data',id: e.features[0].id},{visiblee1:true});
 
 map.flyTo({
 center: coordinates,
-duration: 2000,
-easing: easingFn,
-animate: true,
-curve:2,
-essential: true
+//duration: 2000,
+//easing: easingFn,
+//animate: true,
+//curve: 2,
+//essential: true
+zoom: 8
 });
 
 urlsplit = e.features[0].properties.URL.split(",");
