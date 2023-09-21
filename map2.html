@@ -82,11 +82,12 @@
 
                         // Parse the JSON response
                         const data = await response2.json();
-                        console.log(data);
+                        //console.log(data);
 
                         // Loop through the data and add markers to the map
                         data.forEach(item => {
                             const { latitude, longitude, description, date, region, type } = item; // Replace with your column names
+                            console.log(latitude, longitude, description, date, region, type);
                             if (latitude && longitude) {
                                 const incidentTypeColor = typeDictionary[type];
                                 console.log(incidentTypeColor);
