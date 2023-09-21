@@ -80,66 +80,50 @@ const fetchRegion = async () => {
 }
 fetchRegion()
 
-function settings(str) {
-    switch(str) {
-        case 'indian ocean':
-            obj = {
-                style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
-                center: [57.79394769437804, 14.82233465297636],
-                zoom: 4
-            }
-            break;
-        case 'west africa':
-            obj = {
-                style: 'mapbox://styles/mara-admin/cldk38k54001y01oqwa51ub4e',
-                center: [5.18485323153175, 1.0727315127537915],
-                zoom: 4
-            }
-            break;
-        case 'west africa custom':
-            obj = {
-                style: 'mapbox://styles/mara-admin/cldk38k54001y01oqwa51ub4e',
-                center: [5.18485323153175, 1.0727315127537915],
-                zoom: 4
-            }
-            break;
-        case 'southeast asia':
-            obj = {
-                style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
-                center: [104.07224145349453, 1.3925672730413832],
-                zoom: 4
-            }
-            break;
-        case 'americas':
-            obj = {
-                style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
-                center: [-72.966695, 11.953412],
-                zoom: 4
-            }
-            break;
-        case 'europe':
-            obj = {
-                style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
-                center: [23.7015295592436, 38.03676783844519],
-                zoom: 3.5
-            }
-            break;
-        default:
-            obj = {
-                style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
-                center: [0, 0],
-                zoom: 1
-            }
-    } 
-    return obj;
+
+function getLocationSettings(location) {
+  const locationSettings = {
+    'indian ocean': {
+      style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+      center: [57.79394769437804, 14.82233465297636],
+      zoom: 4
+    },
+    'west africa': {
+      style: 'mapbox://styles/mara-admin/cldk38k54001y01oqwa51ub4e',
+      center: [5.18485323153175, 1.0727315127537915],
+      zoom: 4
+    },
+    'southeast asia': {
+      style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+      center: [104.07224145349453, 1.3925672730413832],
+      zoom: 4
+    },
+    'americas': {
+      style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+      center: [-72.966695, 11.953412],
+      zoom: 4
+    },
+    'europe': {
+      style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+      center: [23.7015295592436, 38.03676783844519],
+      zoom: 3.5
+    },
+    'default': {
+      style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+      center: [0, 0],
+      zoom: 1
+    }
+  };
+
+  return locationSettings[location] || locationSettings['default'];
 }
 
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 const map = new mapboxgl.Map({
     container: 'map',
-    style: settings(regionName).style,
-    center: settings(regionName).center, 
-    zoom: settings(regionName).zoom
+    style: getLocationSettings(regionName).style,
+    center: getLocationSettings(regionName).center, 
+    zoom: getLocationSettings(regionName).zoom
 });
 
 $(".mapboxgl-ctrl-attrib-inner").remove();
