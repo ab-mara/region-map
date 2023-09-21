@@ -56,7 +56,7 @@ supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
 
 const fetchRegion = async () => {
   const { data, error } = await supabase
-  .from('regions')
+  .from('alert_types')
   .select('*')
   if (error) console.log('error', error)
   console.log('data', data)
