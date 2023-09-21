@@ -67,8 +67,9 @@ const fetchRegion = async () => {
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const region = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
-const period = urlParams ? urlParams.get('period') : '';
-console.log(region + ' ' + period);
+//const period = urlParams ? urlParams.get('period') : '';
+//console.log(region + ' ' + period);
+console.log("Region: " + titleCase(region));
 
 function titleCase(str) {
     str = str.toLowerCase().split(' ').map(function(word) {
