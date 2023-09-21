@@ -264,13 +264,13 @@ async function fetchDataAndAddToMap(map) {
                         coordinates: [parseFloat(itemLatLongsplit[1]), parseFloat(itemLatLongsplit[0])]
                     },
                     properties: {
-                        ID: record.ID,
-                        Header: header,
+                        ID: "record.ID",
+                        Header: "header",
                         Date: record.date.substring(0, 10),
                         Longitude: parseFloat(itemLatLongsplit[1]),
                         Latitude: parseFloat(itemLatLongsplit[0]),
-                        Description: description,
-                        URL: url
+                        Description: "description",
+                        URL: "url"
                     }
                 });
             }
