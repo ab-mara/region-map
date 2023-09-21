@@ -24,6 +24,18 @@
 
     <!-- Include your JavaScript code here -->
     <script>
+        // Get the region from the URL
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const regionName = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
+        console.log(regionName);
+
+        function titleCase(str) {
+        str = str.toLowerCase().split(' ').map(function(word) {
+            return word.replace(word[0], word[0].toUpperCase());
+        });
+        return str.join(' ');
+        }
         
         const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
         const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
