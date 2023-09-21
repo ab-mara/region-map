@@ -58,6 +58,8 @@ const fetchRegion = async () => {
   const { data, error } = await supabase
   .from('incidents')
   .select('region, regions(name)')
+  // Filters
+  .eq('regions.name', regionName)
   if (error) console.log('error', error)
   console.log('data', data)
 }
@@ -67,10 +69,10 @@ fetchRegion()
 // Get the region from the URL
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
-const region = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
+const regionName = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
 //const period = urlParams ? urlParams.get('period') : '';
 //console.log(region + ' ' + period);
-console.log("Region: " + titleCase(region));
+console.log("Region: " + titleCase(regionName));
 
 function titleCase(str) {
     str = str.toLowerCase().split(' ').map(function(word) {
@@ -136,9 +138,9 @@ function settings(str) {
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 const map = new mapboxgl.Map({
     container: 'map',
-    style: settings(region).style,
-    center: settings(region).center, 
-    zoom: settings(region).zoom
+    style: settings(regionName).style,
+    center: settings(regionName).center, 
+    zoom: settings(regionName).zoom
 });
 
 $(".mapboxgl-ctrl-attrib-inner").remove();
