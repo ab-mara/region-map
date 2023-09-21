@@ -48,9 +48,6 @@ const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03
 const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
 const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
 
-
-import { createClient } from '@supabase/supabase-js@2'
-
 // Provide a custom schema. Defaults to "public".
 const supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
   db: { schema: 'airtable' }
