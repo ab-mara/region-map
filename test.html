@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>MARA Region Alert Map Test</title>
+<title>MARA Region Alert Map Test 2</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 <!--Mapbox-->
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
@@ -73,7 +73,7 @@ const fetchRegion = async () => {
   const { data, error } = await supabase
   .from('incidents')
   .select('region, regions!inner(*)')
-  .eq('regions.name', 'Europe')
+  .eq('regions.name', regionName)
   if (error) console.log('error', error)
   console.log('data', data)
 }
