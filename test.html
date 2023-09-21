@@ -73,8 +73,6 @@ const fetchRegion = async () => {
   const { data, error } = await supabase
   .from('incidents')
   .select('region, regions(name)')
-  // Filters
-  //.cs('regions', ['array', 'contains'])
   if (error) console.log('error', error)
   console.log('data', data)
 }
