@@ -62,15 +62,14 @@ function getRegionNameFromURL() {
 }
 
 // Function to fetch region data from Supabase
-const fetchRegionData = async () => {
+const fetchData = async () => {
     const { data, error } = await supabase
-    .from('incidents')
-    .select('*, regions!inner(*), alert_types!inner(*)')
-    .eq('regions.name', 'Indian Ocean')
+      .from('incidents')
+      .select('*, regions!inner(*), alert_types!inner(*)')
+      .eq('regions.name', 'Indian Ocean')
     if (error) console.log('error', error)
-    console.log('Region data', data)
+    console.log('Supabase data', data)
 }
-fetchRegionData()
 
 // Function to get location settings
 function getLocationSettings(location) {
@@ -230,7 +229,7 @@ function addMapLayers(map) {
 // Function to fetch data from Supabase and add it to the map
 async function fetchDataAndAddToMap(map) {
     try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
+        /*const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents`, {
             headers: {
                 'apikey': SUPABASE_API_KEY,
                 'Authorization': `Bearer ${SUPABASE_API_KEY}`,
@@ -243,7 +242,9 @@ async function fetchDataAndAddToMap(map) {
         }
 
         const data = await response.json();
-        console.log("data: ", data);
+        console.log("data: ", data);*/
+
+        fetchData();
 
         const geojsonFeatures = [];
 
