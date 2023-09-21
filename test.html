@@ -171,7 +171,7 @@ function addMapLayers(map) {
             },
             'circle-color': [
                 'match',
-                ['get', 'type'],
+                ['get', 'Type'],
                 'Piracy', '#F82B60',
                 'Sighting', '#FF6F2C',
                 'Smuggling', '#20C933',
@@ -270,6 +270,7 @@ async function fetchDataAndAddToMap(map) {
                         Longitude: parseFloat(itemLatLongsplit[1]),
                         Latitude: parseFloat(itemLatLongsplit[0]),
                         Description: description,
+                        Type: record.type,
                         URL: url
                     }
                 });
