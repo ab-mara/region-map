@@ -230,7 +230,7 @@ async function fetchDataAndAddToMap(map) {
             return;
         }*/
 
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents?select=latitude,longitude,date,description,header,details_url_absolute,regions!inner(*),alert_types!inner(*)&regions.name=eq.Indian Ocean`, {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents?select=position,latitude,longitude,date,description,header,details_url_absolute,regions!inner(*),alert_types!inner(*)&regions.name=eq.Indian Ocean`, {
             headers: {
                 'apikey': SUPABASE_API_KEY,
                 'Authorization': `Bearer ${SUPABASE_API_KEY}`,
