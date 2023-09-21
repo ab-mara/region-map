@@ -48,6 +48,21 @@ const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03
 const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
 const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
 
+// Get the region from the URL
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const regionName = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
+//const period = urlParams ? urlParams.get('period') : '';
+//console.log(region + ' ' + period);
+console.log("Region: " + titleCase(regionName));
+
+function titleCase(str) {
+    str = str.toLowerCase().split(' ').map(function(word) {
+        return word.replace(word[0], word[0].toUpperCase());
+    });
+    return str.join(' ');
+}
+
 // Provide a custom schema. Defaults to "public".
 const { createClient } = supabase
 supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
@@ -64,22 +79,6 @@ const fetchRegion = async () => {
   console.log('data', data)
 }
 fetchRegion()
-
-
-// Get the region from the URL
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-const regionName = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
-//const period = urlParams ? urlParams.get('period') : '';
-//console.log(region + ' ' + period);
-console.log("Region: " + titleCase(regionName));
-
-function titleCase(str) {
-    str = str.toLowerCase().split(' ').map(function(word) {
-        return word.replace(word[0], word[0].toUpperCase());
-    });
-    return str.join(' ');
-}
 
 function settings(str) {
     switch(str) {
