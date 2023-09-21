@@ -234,7 +234,7 @@ async function fetchDataAndAddToMap(map) {
           db: { schema: 'airtable' }
         })
 
-        // Function to fetch region data from Supabase
+        // Function to fetch data from Supabase
         const fetchData = async () => {
             const { data, error } = await supabase
               .from('incidents')
@@ -242,7 +242,9 @@ async function fetchDataAndAddToMap(map) {
               .eq('regions.name', 'Indian Ocean')
             if (error) console.log('error', error)
             console.log('Supabase data', data)
-        }
+        };
+
+        // Call the fetchData function to retrieve data
         fetchData();
 
         const geojsonFeatures = [];
