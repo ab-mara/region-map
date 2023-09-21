@@ -276,7 +276,8 @@ async function fetchDataAndAddToMap(map) {
                 });
             }
         });
-
+        console.log("geojsonFeatures: ", geojsonFeatures);
+        
         const geojsonObject = {
             type: 'FeatureCollection',
             features: geojsonFeatures
