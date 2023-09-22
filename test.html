@@ -262,6 +262,7 @@ async function fetchDataAndAddToMap(map) {
                 const description = record.description;
                 const header = record.header;
                 const url = record.details_url_absolute;
+                const type = record.alert_types.name;
 
                 geojsonFeatures.push({
                     type: 'Feature',
@@ -276,7 +277,7 @@ async function fetchDataAndAddToMap(map) {
                         Longitude: parseFloat(itemLatLongsplit[1]),
                         Latitude: parseFloat(itemLatLongsplit[0]),
                         Description: description,
-                        Type: record.alert_types.name,
+                        Type: type,
                         URL: url
                     }
                 });
