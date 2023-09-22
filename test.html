@@ -12,16 +12,8 @@
 <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
 <!--Supabase JavaScript SDK-->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!--jQuery-->
-<script
-  src="https://code.jquery.com/jquery-3.6.0.min.js"
-  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-  crossorigin="anonymous">
-</script>
 <!--Magic iFrame-->
 <script src="magic-iframe.min.js" data-role="child"></script>
-<!--W3-->
-<link rel="stylesheet" href="w3.css" type="text/css">
 <style>
 body { 
     margin: 0; 
@@ -372,6 +364,39 @@ function setupMap() {
 
         // Fetch data from Supabase and add it to the map
         fetchDataAndAddToMap(map);
+    });
+
+    // Add geocoder
+    const geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl,
+        marker: false,
+        flyTo: {
+            bearing: 0,
+            speed: 0.5,
+            curve: 1,
+            easing: function (t) {
+                return t;
+            }
+        },
+        placeholder: 'Search incidents',
+        localGeocoder: function (query) {
+            const matchingFeatures = [];
+            for (const feature of geojsonObject.features) {
+                    if (
+                    feature.properties.Header
+                    .toLowerCase()
+                    .includes(query.toLowerCase())
+                ) {
+                    feature['place_name'] = `${feature.properties.Header}`;
+                    feature['center'] = feature.geometry.coordinates;
+                    matchingFeatures.push(feature);
+                }
+            }
+            return matchingFeatures;
+        },
+        countries: 'us',
+        limit: 10
     });
 
     // Remove Mapbox logo and attribution
