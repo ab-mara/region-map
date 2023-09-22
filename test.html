@@ -216,6 +216,12 @@ function addMapLayers(map) {
 
         // Example: Fly to the clicked point on unclustered point click
         const coordinates = e.features[0].geometry.coordinates.slice();
+        const properties = e.features[0].properties;
+        const propertiesID = properties.ID;
+        const propertiesDate = properties.Date;
+        const propertiesDescription = properties.Description;
+        const propertiesType = properties.Type;
+        const propertiesURL = properties.URL;
         map.flyTo({ center: coordinates, zoom: 8 });
     });
 }
