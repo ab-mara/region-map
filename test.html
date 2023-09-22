@@ -399,6 +399,11 @@ function setupMap() {
         limit: 10
     });
 
+    // Add controls to the map
+    map.addControl(geocoder, 'top-right');
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+
     // Remove Mapbox logo and attribution
     const attribInner = document.querySelector('.mapboxgl-ctrl-attrib-inner');
     const bottomLeft = document.querySelector('.mapboxgl-ctrl-bottom-left');
