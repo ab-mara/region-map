@@ -353,7 +353,7 @@ function setupMap() {
     });
 
     // Add geocoder
-   const geocoder = new MapboxGeocoder({
+    const geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         mapboxgl: mapboxgl,
         marker: false,
@@ -380,8 +380,9 @@ function setupMap() {
                 }
             }
             return matchingFeatures;
+            console.log("matchingFeatures: ", matchingFeatures);
         },
-        countries: 'us',
+        countries: 'in',
         limit: 10
     });*/
 
