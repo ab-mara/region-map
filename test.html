@@ -202,7 +202,11 @@ function addMapLayers(map) {
         // Create and display a popup with details
         const popup = new mapboxgl.Popup()
             .setLngLat(coordinates)
-            .setHTML(`<p>${propertiesID}</p>`)
+            .setHTML(`
+            <p>${propertiesID}</p><br>
+            <p>${propertiesDate}</p><br>
+            <p>${propertiesDescription}</p><br>
+            `)
             .addTo(map);
     });
 
