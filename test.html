@@ -173,6 +173,12 @@ function addMapLayers(map) {
         }
     });
 
+    // Create a popup but don't add it to the map yet
+    const popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
+    });
+
     // Add your existing event listeners here
     map.on('click', 'clusters', (e) => {
         // Handle cluster click
@@ -210,19 +216,14 @@ function addMapLayers(map) {
         const propertiesDescription = properties.Description;
         const propertiesType = properties.Type;
         const propertiesURL = properties.URL;
-        
+
         // Create and display a popup with details
-        const popup = new mapboxgl.Popup({
-            className: 'popups',
-        })
-            .setLngLat(coordinates)
-            .setHTML(`
+        popup.setLngLat(coordinates).setHTML(`
             <p><b>Alert ID: </b>${propertiesID}</p>
             <p><b>Date: </b>${propertiesDate}</p>
             <p><b>Type: </b>${propertiesType}</p>
             <p>${propertiesDescription.substr(0, 200)}&#8230;</p>
-            `)
-            .addTo(map);
+            `).addTo(map);
     });
 
     map.on('mouseleave', 'unclustered-point', (e) => {
