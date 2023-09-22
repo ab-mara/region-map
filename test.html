@@ -55,8 +55,6 @@ function getRegionNameFromURL() {
     return urlParams.get('region') ? urlParams.get('region').split('-').join(' ') : 'world';
 }
 
-console.log("Region name: ", getRegionNameFromURL());
-
 // Function to get location settings
 function getLocationSettings(location) {
   const locationSettings = {
@@ -313,7 +311,9 @@ async function fetchDataAndAddToMap(map) {
 function setupMap() {
     mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
     const regionName = getRegionNameFromURL();
+    console.log("Region name: ", getRegionNameFromURL());
     const regionSettings = getLocationSettings(regionName);
+    console.log("Region settings: ", regionSettings);
 
     const map = new mapboxgl.Map({
         container: 'map',
