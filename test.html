@@ -190,8 +190,9 @@ function addMapLayers(map) {
     map.on('mouseenter', 'unclustered-point', (e) => {
         // Handle unclustered point mouseenter
         // ...
-
-        // Example: Show a popup on unclustered point mouseenter
+        // Change the cursor style as a UI indicator
+        map.getCanvas().style.cursor = 'pointer';
+        // Show a popup on unclustered point mouseenter
         const coordinates = e.features[0].geometry.coordinates.slice();
         const properties = e.features[0].properties;
         const propertiesID = properties.ID;
@@ -200,7 +201,9 @@ function addMapLayers(map) {
         const propertiesType = properties.Type;
         const propertiesURL = properties.URL;
         // Create and display a popup with details
-        const popup = new mapboxgl.Popup()
+        const popup = new mapboxgl.Popup({
+            className: 'popups',
+        })
             .setLngLat(coordinates)
             .setHTML(`
             <p><b>Alert ID: </b>${propertiesID}</p>
@@ -216,9 +219,7 @@ function addMapLayers(map) {
         // ...
 
         // Example: Close the popup on unclustered point mouseleave
-        /*if (popup.isOpen()) {
-            popup.remove();
-        }*/
+        
     });
 
     map.on('click', 'unclustered-point', (e) => {
