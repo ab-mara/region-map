@@ -55,6 +55,8 @@ function getRegionNameFromURL() {
     return urlParams.get('region') ? urlParams.get('region').split('-').join(' ') : 'world';
 }
 
+console.log("Region name: ", getRegionNameFromURL());
+
 // Function to get location settings
 function getLocationSettings(location) {
   const locationSettings = {
