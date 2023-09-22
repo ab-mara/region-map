@@ -28,6 +28,19 @@ body {
     outline: none;
     border: 0;
 }
+.mapboxgl-ctrl-geocoder {
+      background-color: inherit;
+      border: 1px solid var(--gray-lighter);
+      border-radius: 0.5rem;
+      /*transition: box-shadow 0.875s;*/
+      transition: border-color 0.875s;
+      width: clamp(10rem, 20rem, 25vw);
+      align-items: center;
+  }
+.mapboxgl-ctrl-geocoder:hover {
+      /*box-shadow: 0 0 30px rgba(0,0,0,.2);*/
+      border-color: var(--input-border-color);
+}
 </style>
 </head>
 <body>
