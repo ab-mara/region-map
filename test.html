@@ -329,7 +329,7 @@ async function fetchDataAndAddToMap(map) {
         const geocoder = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
             mapboxgl: mapboxgl,
-            marker: false,
+            marker: true,
             flyTo: {
                 bearing: 0,
                 speed: 0.5,
@@ -356,7 +356,6 @@ async function fetchDataAndAddToMap(map) {
                 return matchingFeatures;
                 console.log("matchingFeatures: ", matchingFeatures);
             },
-            countries: 'in',
             zoom: 10,
             limit: 10
         });
