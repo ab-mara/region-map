@@ -231,7 +231,7 @@ function addMapLayers(map) {
         // Handle unclustered point click
         // ...
 
-        // Example: Fly to the clicked point on unclustered point click
+        // Fly to the clicked point on unclustered point click
         const coordinates = e.features[0].geometry.coordinates.slice();
         map.flyTo({ center: coordinates, zoom: 8 });
     });
@@ -339,6 +339,7 @@ async function fetchDataAndAddToMap(map) {
                 }
             },
             placeholder: 'Search incidents',
+            localGeocoderOnly: true,
             localGeocoder: function (query) {
                 const matchingFeatures = [];
                 for (const feature of geojsonObject.features) {
@@ -356,6 +357,7 @@ async function fetchDataAndAddToMap(map) {
                 console.log("matchingFeatures: ", matchingFeatures);
             },
             countries: 'in',
+            zoom: 8,
             limit: 10
         });
 
