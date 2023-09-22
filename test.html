@@ -233,6 +233,8 @@ async function fetchDataAndAddToMap(map) {
         const { data, error } = await supabaseClient
             .from('incidents')
             .select(`
+                publish,
+                domain,
                 alert_id, 
                 position, 
                 date, 
