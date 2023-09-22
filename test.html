@@ -367,7 +367,7 @@ function setupMap() {
     });
 
     // Add geocoder
-    const geocoder = new MapboxGeocoder({
+   /* const geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         mapboxgl: mapboxgl,
         marker: false,
@@ -397,10 +397,10 @@ function setupMap() {
         },
         countries: 'us',
         limit: 10
-    });
+    });*/
 
     // Add controls to the map
-    map.addControl(geocoder, 'top-right');
+    //map.addControl(geocoder, 'top-right');
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
     map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 
