@@ -190,9 +190,19 @@ function addMapLayers(map) {
     map.on('mouseenter', 'unclustered-point', (e) => {
         // Handle unclustered point mouseenter
         // ...
+
         // Change the cursor style as a UI indicator
         map.getCanvas().style.cursor = 'pointer';
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
         // Show a popup on unclustered point mouseenter
+        // Copy coordinates and properties array
         const coordinates = e.features[0].geometry.coordinates.slice();
         const properties = e.features[0].properties;
         const propertiesID = properties.ID;
@@ -200,6 +210,7 @@ function addMapLayers(map) {
         const propertiesDescription = properties.Description;
         const propertiesType = properties.Type;
         const propertiesURL = properties.URL;
+        
         // Create and display a popup with details
         const popup = new mapboxgl.Popup({
             className: 'popups',
@@ -218,7 +229,9 @@ function addMapLayers(map) {
         // Handle unclustered point mouseleave
         // ...
 
-        // Example: Close the popup on unclustered point mouseleave
+        // Close the popup on unclustered point mouseleave
+        map.getCanvas().style.cursor = '';
+        popup.remove();
         
     });
 
