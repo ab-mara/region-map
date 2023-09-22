@@ -263,7 +263,7 @@ async function fetchDataAndAddToMap(map) {
                 const header = record.header;
                 const url = record.details_url_absolute;
                 const type = record.alert_types.name;
-                console.log(record.alert_types);
+                console.log(record.details_url_absolute);
 
                 geojsonFeatures.push({
                     type: 'Feature',
