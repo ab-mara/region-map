@@ -239,10 +239,10 @@ async function fetchDataAndAddToMap(map) {
                 description, 
                 header, 
                 details_url_absolute, 
-                regions(id, name), 
-                alert_types(name, color)
+                regions!inner(name), 
+                alert_types!inner(name, color)
                 `)
-            .eq('regions.name', 'Europe');
+            .eq('regions.name', 'Europe')
 
         if (error) {
             console.error('Supabase error', error);
