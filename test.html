@@ -267,7 +267,7 @@ async function fetchDataAndAddToMap(map) {
                 const type = record.alert_types ? record.alert_types.name : null;
                 const region = record.regions ? record.regions.name : null;
 
-                if (regionTitleCase == region) {
+                if (regionTitleCase === region) {
                     geojsonFeatures.push({
                         type: 'Feature',
                         geometry: {
