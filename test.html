@@ -55,6 +55,8 @@ function getRegionNameFromURL() {
     return urlParams.get('region') ? urlParams.get('region').split('-').join(' ') : 'world';
 }
 
+const regionTitleCase = titleCase(getRegionNameFromURL());
+
 // Function to get location settings
 function getLocationSettings(location) {
   const locationSettings = {
@@ -265,24 +267,26 @@ async function fetchDataAndAddToMap(map) {
                 const type = record.alert_types ? record.alert_types.name : null;
                 const region = record.regions ? record.regions.name : null;
 
-                geojsonFeatures.push({
-                    type: 'Feature',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [parseFloat(itemLatLongsplit[1]), parseFloat(itemLatLongsplit[0])]
-                    },
-                    properties: {
-                        ID: record.alert_id,
-                        Header: header,
-                        Date: record.date.substring(0, 10),
-                        Region: region,
-                        Longitude: parseFloat(itemLatLongsplit[1]),
-                        Latitude: parseFloat(itemLatLongsplit[0]),
-                        Description: description,
-                        Type: type,
-                        URL: url
-                    }
-                });
+                if (regionTitleCase == region) {
+                    geojsonFeatures.push({
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [parseFloat(itemLatLongsplit[1]), parseFloat(itemLatLongsplit[0])]
+                        },
+                        properties: {
+                            ID: record.alert_id,
+                            Header: header,
+                            Date: record.date.substring(0, 10),
+                            Region: region,
+                            Longitude: parseFloat(itemLatLongsplit[1]),
+                            Latitude: parseFloat(itemLatLongsplit[0]),
+                            Description: description,
+                            Type: type,
+                            URL: url
+                        }
+                    });
+                }
             }
         });
 
