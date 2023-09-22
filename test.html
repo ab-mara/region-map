@@ -203,9 +203,9 @@ function addMapLayers(map) {
         const popup = new mapboxgl.Popup()
             .setLngLat(coordinates)
             .setHTML(`
-            <p>${propertiesID}</p><br>
-            <p>${propertiesDate}</p><br>
-            <p>${propertiesDescription}</p><br>
+            <p><b>Alert ID: </b>${propertiesID}</p>
+            <p><b>Date: </b>${propertiesDate}</p>
+            <p>${propertiesDescription}</p>
             `)
             .addTo(map);
     });
