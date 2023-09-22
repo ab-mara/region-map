@@ -256,169 +256,244 @@ async function fetchDataAndAddToMap(map) {
                 position, 
                 date, 
                 description, 
-                header, 
-                details_url_absolute, 
-                regions!inner(name), 
-                alert_types!inner(name, color)
-                `)
-            .eq('regions.name', regionTitleCase)
-            .eq('publish', true)
-            .eq('domain', 'Maritime')
+                                header, 
+                                details_url_absolute, 
+                                regions!inner(name), 
+                                alert_types!inner(name, color)
+                                `)
+                            .eq('regions.name', regionTitleCase)
+                            .eq('publish', true)
+                            .eq('domain', 'Maritime')
 
-        if (error) {
-            console.error('Supabase error', error);
-            return;
-        }
-
-        /*const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents?select=alert_id,position,date,description,header,details_url_absolute,regions(name),alert_types(name,color)`, {
-            headers: {
-                'apikey': SUPABASE_API_KEY,
-                'Authorization': `Bearer ${SUPABASE_API_KEY}`,
-                'Accept-Profile': 'airtable',
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();*/
-
-        console.log('Supabase data', data);
-
-        const geojsonFeatures = [];
-
-        data.forEach((record) => {
-            const itemLatLongsplit = record.position.split(",");
-            if (record.position) {
-                const alertId = record.alert_id;
-                const date = record.date.substring(0, 10);
-                const description = record.description;
-                const header = record.header;
-                const url = record.details_url_absolute;
-                const type = record.alert_types ? record.alert_types.name : null;
-                const region = record.regions ? record.regions.name : null;
-
-                    geojsonFeatures.push({
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: [parseFloat(itemLatLongsplit[1]), parseFloat(itemLatLongsplit[0])]
-                        },
-                        properties: {
-                            ID: record.alert_id,
-                            Header: header,
-                            Date: date,
-                            Region: region,
-                            Longitude: parseFloat(itemLatLongsplit[1]),
-                            Latitude: parseFloat(itemLatLongsplit[0]),
-                            Description: description,
-                            Type: type,
-                            URL: url
+                        if (error) {
+                            console.error('Supabase error', error);
+                            return;
                         }
-                    });
-            }
-        });
 
-        console.log("geojsonFeatures: ", geojsonFeatures);
+                        /*const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents?select=alert_id,position,date,description,header,details_url_absolute,regions(name),alert_types(name,color)`, {
+                            headers: {
+                                'apikey': SUPABASE_API_KEY,
+                                'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+                                'Accept-Profile': 'airtable',
+                            },
+                        });
 
-        const geojsonObject = {
-            type: 'FeatureCollection',
-            features: geojsonFeatures
-        };
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
 
-        map.addSource('data', {
-            type: 'geojson',
-            data: geojsonObject,
-            cluster: true,
-            generateId: true,
-            clusterMaxZoom: 5,
-            clusterRadius: 40
-        });
+                        const data = await response.json();*/
 
-        // Add map layers, interactions, and controls as before
-        addMapLayers(map);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-}
+                        console.log('Supabase data', data);
 
-// Function to set up map and event listeners
-function setupMap() {
-    mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
-    const regionName = getRegionNameFromURL();
-    //console.log("Region name: ", getRegionNameFromURL());
-    const regionSettings = getLocationSettings(regionName);
-    //console.log("Region settings: ", regionSettings);
+                        const geojsonFeatures = [];
 
-    const map = new mapboxgl.Map({
-        container: 'map',
-        style: regionSettings.style,
-        center: regionSettings.center,
-        zoom: regionSettings.zoom,
-    });
+                        data.forEach((record) => {
+                            const itemLatLongsplit = record.position.split(",");
+                            if (record.position) {
+                                const alertId = record.alert_id;
+                                const date = record.date.substring(0, 10);
+                                const description = record.description;
+                                const header = record.header;
+                                const url = record.details_url_absolute;
+                                const type = record.alert_types ? record.alert_types.name : null;
+                                const region = record.regions ? record.regions.name : null;
 
-    map.on('load', () => {
-        // Add map layers, interactions, and controls
-        addMapLayers(map);
+                                    geojsonFeatures.push({
+                                        type: 'Feature',
+                                        geometry: {
+                                            type: 'Point',
+                                            coordinates: [parseFloat(itemLatLongsplit[1]), parseFloat(itemLatLongsplit[0])]
+                                        },
+                                        properties: {
+                                            ID: record.alert_id,
+                                            Header: header,
+                                            Date: date,
+                                            Region: region,
+                                            Longitude: parseFloat(itemLatLongsplit[1]),
+                                            Latitude: parseFloat(itemLatLongsplit[0]),
+                                            Description: description,
+                                            Type: type,
+                                            URL: url
+                                        }
+                                    });
+                            }
+                        });
 
-        // Fetch data from Supabase and add it to the map
-        fetchDataAndAddToMap(map);
-    });
+                        console.log("geojsonFeatures: ", geojsonFeatures);
 
-    // Add geocoder
-    const geocoder = new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-        mapboxgl: mapboxgl,
-        marker: false,
-        flyTo: {
-            bearing: 0,
-            speed: 0.5,
-            curve: 1,
-            easing: function (t) {
-                return t;
-            }
-        },
-        placeholder: 'Search incidents',
-        localGeocoder: function (query) {
-            const matchingFeatures = [];
-            for (const feature of geojsonObject.features) {
-                    if (
-                    feature.properties.Header
-                    .toLowerCase()
-                    .includes(query.toLowerCase())
-                ) {
-                    feature['place_name'] = `${feature.properties.Header}`;
-                    feature['center'] = feature.geometry.coordinates;
-                    matchingFeatures.push(feature);
+                        const geojsonObject = {
+                            type: 'FeatureCollection',
+                            features: geojsonFeatures
+                        };
+
+                        map.addSource('data', {
+                            type: 'geojson',
+                            data: geojsonObject,
+                            cluster: true,
+                            generateId: true,
+                            clusterMaxZoom: 5,
+                            clusterRadius: 40
+                        });
+
+                        // Add map layers, interactions, and controls as before
+                        addMapLayers(map, geojsonObject);
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                    }
                 }
-            }
-            return matchingFeatures;
-        },
-        countries: 'us',
-        limit: 10
-    });
 
-    // Add controls to the map
-    map.addControl(geocoder, 'top-right');
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-    map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+                // Function to set up map and event listeners
+                function setupMap(geojsonObject) {
+                    mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+                    const regionName = getRegionNameFromURL();
+                    //console.log("Region name: ", getRegionNameFromURL());
+                    const regionSettings = getLocationSettings(regionName);
+                    //console.log("Region settings: ", regionSettings);
 
-    // Remove Mapbox logo and attribution
-    const attribInner = document.querySelector('.mapboxgl-ctrl-attrib-inner');
-    const bottomLeft = document.querySelector('.mapboxgl-ctrl-bottom-left');
-    if (attribInner) {
-        attribInner.parentNode.removeChild(attribInner);
-    }
-    if (bottomLeft) {
-        bottomLeft.parentNode.removeChild(bottomLeft);
-    }
-}
+                    const map = new mapboxgl.Map({
+                        container: 'map',
+                        style: regionSettings.style,
+                        center: regionSettings.center,
+                        zoom: regionSettings.zoom,
+                    });
 
-// Call setupMap to start the process
-setupMap();
+                    map.on('load', () => {
+                        // Add map layers, interactions, and controls
+                        addMapLayers(map, geojsonObject);
 
-</script>
+                        // Fetch data from Supabase and add it to the map
+                        fetchDataAndAddToMap(map);
+                    });
 
-</body>
-</html>
+                    // Add geocoder
+                    const geocoder = new MapboxGeocoder({
+                        accessToken: mapboxgl.accessToken,
+                        mapboxgl: mapboxgl,
+                        marker: false,
+                        flyTo: {
+                            bearing: 0,
+                            speed: 0.5,
+                            curve: 1,
+                            easing: function (t) {
+                                return t;
+                            }
+                        },
+                        placeholder: 'Search incidents',
+                        localGeocoder: function (query) {
+                            const matchingFeatures = [];
+                            for (const feature of geojsonObject.features) {
+                                    if (
+                                    feature.properties.Header
+                                    .toLowerCase()
+                                    .includes(query.toLowerCase())
+                                ) {
+                                    feature['place_name'] = `${feature.properties.Header}`;
+                                    feature['center'] = feature.geometry.coordinates;
+                                    matchingFeatures.push(feature);
+                                }
+                            }
+                            return matchingFeatures;
+                        },
+                        countries: 'us',
+                        limit: 10
+                    });
+
+                    // Add controls to the map
+                    map.addControl(geocoder, 'top-right');
+                    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+                    map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+
+                    // Remove Mapbox logo and attribution
+                    const attribInner = document.querySelector('.mapboxgl-ctrl-attrib-inner');
+                    const bottomLeft = document.querySelector('.mapboxgl-ctrl-bottom-left');
+                    if (attribInner) {
+                        attribInner.parentNode.removeChild(attribInner);
+                    }
+                    if (bottomLeft) {
+                        bottomLeft.parentNode.removeChild(bottomLeft);
+                    }
+                }
+
+                // Call setupMap to start the process
+                fetchDataAndAddToMap();
+
+                function fetchDataAndAddToMap() {
+                    const SUPABASE_URL = 'https://<your-supabase-url>.supabase.co';
+                    const SUPABASE_API_KEY = '<your-supabase-api-key>';
+
+                    try {
+                        const { data, error } = supabase
+                            .from('incidents')
+                            .select(`
+                                alert_id, 
+                                position, 
+                                date, 
+                                description, 
+                                header, 
+                                details_url_absolute, 
+                                regions!inner(name), 
+                                alert_types!inner(name, color)
+                                `)
+                            .eq('regions.name', regionTitleCase)
+                            .eq('publish', true)
+                            .eq('domain', 'Maritime')
+
+                        if (error) {
+                            console.error('Supabase error', error);
+                            return;
+                        }
+
+                        console.log('Supabase data', data);
+
+                        const geojsonFeatures = [];
+
+                        data.forEach((record) => {
+                            const itemLatLongsplit = record.position.split(",");
+                            if (record.position) {
+                                const alertId = record.alert_id;
+                                const date = record.date.substring(0, 10);
+                                const description = record.description;
+                                const header = record.header;
+                                const url = record.details_url_absolute;
+                                const type = record.alert_types ? record.alert_types.name : null;
+                                const region = record.regions ? record.regions.name : null;
+
+                                    geojsonFeatures.push({
+                                        type: 'Feature',
+                                        geometry: {
+                                            type: 'Point',
+                                            coordinates: [parseFloat(itemLatLongsplit[1]), parseFloat(itemLatLongsplit[0])]
+                                        },
+                                        properties: {
+                                            ID: record.alert_id,
+                                            Header: header,
+                                            Date: date,
+                                            Region: region,
+                                            Longitude: parseFloat(itemLatLongsplit[1]),
+                                            Latitude: parseFloat(itemLatLongsplit[0]),
+                                            Description: description,
+                                            Type: type,
+                                            URL: url
+                                        }
+                                    });
+                            }
+                        });
+
+                        console.log("geojsonFeatures: ", geojsonFeatures);
+
+                        const geojsonObject = {
+                            type: 'FeatureCollection',
+                            features: geojsonFeatures
+                        };
+
+                        setupMap(geojsonObject);
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                    }
+                }
+
+                </script>
+
+                </body>                </html>
+
