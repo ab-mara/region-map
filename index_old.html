@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MARA Region Alert Map</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<!--Mapbox-->
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" type="text/css">
+<!--Mapbox Geocoder-->
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+<!--Airtable-->
+<script src="airtable.browser.js"></script>
+<!--jQuery-->
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous">
+</script>
+<!--Magic iFrame-->
+<script src="magic-iframe.min.js" data-role="child"></script>
+<!--W3-->
+<link rel="stylesheet" href="w3.css" type="text/css">
+<style>
+body { 
+    margin: 0; 
+    padding: 0; 
+}
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+.mapboxgl-popup-content {
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+    border-radius: .25rem;
+}
+.mapboxgl-popup-content a {
+    outline: none;
+    border: 0;
+}
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const region = urlParams ? urlParams.get('region').split('-').join(' ') : 'world';
+const period = urlParams ? urlParams.get('period') : '';
+console.log(region + ' ' + period);
+
+function titleCase(str) {
+  str = str.toLowerCase().split(' ').map(function(word) {
+    return word.replace(word[0], word[0].toUpperCase());
+});
+ return str.join(' ');
+}
+
+function settings(str) {
+    switch(str) {
+        case 'indian ocean':
+            obj = {
+                style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+                center: [57.79394769437804, 14.82233465297636],
+                zoom: 4
+            }
+            break;
+        case 'west africa':
+            obj = {
+                style: 'mapbox://styles/mara-admin/cldk38k54001y01oqwa51ub4e',
+                center: [5.18485323153175, 1.0727315127537915],
+                zoom: 4
+            }
+            break;
+        case 'west africa custom':
+            obj = {
+                style: 'mapbox://styles/mara-admin/cldk38k54001y01oqwa51ub4e',
+                center: [5.18485323153175, 1.0727315127537915],
+                zoom: 4
+            }
+            break;
+        case 'southeast asia':
+            obj = {
+                style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+                center: [104.07224145349453, 1.3925672730413832],
+                zoom: 4
+            }
+            break;
+        case 'americas':
+            obj = {
+                style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+                center: [-72.966695, 11.953412],
+                zoom: 4
+            }
+            break;
+        case 'europe':
+            obj = {
+                style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+                center: [23.7015295592436, 38.03676783844519],
+                zoom: 3.5
+            }
+            break;
+        default:
+            obj = {
+                style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8',
+                center: [0, 0],
+                zoom: 1
+            }
+        } 
+    return obj;
+}
+
+mapboxgl.accessToken = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+const map = new mapboxgl.Map({
+    container: 'map',
+    style: settings(region).style,
+    center: settings(region).center, 
+    zoom: settings(region).zoom
+});
+
+console.log(map);
+
+$(".mapboxgl-ctrl-attrib-inner").remove();
+$(".mapboxgl-ctrl-bottom-left").remove();
+
+var text = `{"type" : "FeatureCollection", "features": [`;
+
+var Airtable = require("airtable");
+var base = new Airtable({apiKey: "keyVvzfFeg77loGX6"}).base("appTQE7hkdQqfhnQV");
+var regionName = [];
+var typeName = [];
+//var title = document.title.split(" - ");
+//var view = title[1];
+var view = titleCase(region);
+var featureid;
+console.log = function () { };
+
+//"Regions" table and "Region List" view
+base("tblJOJLv7wp0iTZYf").select({
+    view: "viwohj8cdMoW9PNQN"
+}).eachPage(function page(records, fetchNextPage) {
+    records.forEach(function(record, idx) {
+        regionName.push([record.id, record.get('Name')])
+    });
+    fetchNextPage();
+}, function done(err) {
+    if (err) { console.error(err); return; }
+});
+
+//console.log(regionName);
+
+//"Alert Types" table and "Grid View" view
+base("tbl5gChJj183Y8bDl").select({
+    view: "viw1ix8YzdZSs8AQi"
+}).eachPage(function page(records, fetchNextPage) {
+    records.forEach(function(record, idx) {
+        typeName.push([record.id, record.get('Name')])
+    });
+    fetchNextPage();
+}, function done(err) {
+    if (err) { console.error(err); return; }
+});
+
+//console.log(typeName);
+
+
+base("tbl4dADuGUygdFQ2N").select({
+    view: view//Incident view filtered by region
+}).eachPage(function page(records, fetchNextPage) {
+    records.forEach(function(record, idx) {
+
+        if (record.get("Position")) {
+            if (record.get("Position").includes(",")){
+            description = "";
+            header = "";
+            url = "";
+            if (record.get("Description Trimmed")) {
+                description = record.get("Description Trimmed").replace(/(\r\n|\n|\r)/gm,"");
+                description = description.replaceAll(`"`,`'`);
+                description = description.replaceAll(`\\`,``);
+            }
+            if (record.get("Header")) {
+                header = record.get("Header").replace(/(\r\n|\n|\r)/gm,"");
+                header = header.replaceAll(`"`,`'`);
+            }
+            if (record.get("Details URL Absolute")) {
+                url = record.get("Details URL Absolute").replace(/[\r\n]+/g," ");
+            }
+
+            item = regionName.find(function(item) {return item[0] == record.get("Region");});
+            //console.log(item)
+
+            item1 = typeName.find(function(item) {return item[0] == record.get("Type");});
+            //console.log(item1)
+
+            itemLatLongsplit = record.get("Position").split(",");
+            
+            text += `{"type": "Feature",
+            "geometry": {
+            "type": "Point",
+            "coordinates": [` + parseFloat(itemLatLongsplit[1]) + `, ` + parseFloat(itemLatLongsplit[0]) + `]
+            },
+            "properties": {
+            "ID": "` + record.get("ID") + `",
+            "Header": "` + header + `",
+            "Type": "` + item1[1] + `",
+            "Date": "` + record.get("Date").substring(0, 10) + `",
+            "Longitude": "` + parseFloat(itemLatLongsplit[1]) + `",
+            "Latitude": "` + parseFloat(itemLatLongsplit[0]) + `",
+            "Region": "` + item[1] + `",
+            "Description": "` + description + `",
+            "URL": "` + url + `"
+            }
+            },`
+            }
+        }
+    });
+fetchNextPage();
+}, function done(err) {
+    if (err) { console.error(err); return; }
+    
+
+
+map.loadImage('./mapbox-marker-icon-20px-purple.png', (error, image) => {
+if (error) throw error;
+
+map.addImage('marker', image, {});
+map.addImage('marker1', image, {});
+
+text1 = text.substring(0, text.length - 1)
+text1 += `]}`;
+obj = JSON.parse(text1);
+//console.log(obj);
+
+map.addSource('data', {
+type: 'geojson',
+data: obj,
+cluster: true,
+generateId: true,
+clusterMaxZoom: 5, // Max zoom to cluster points on
+clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
+});
+/*
+// Add a data source containing GeoJSON data.
+map.addSource('hra', {
+'type': 'geojson',
+'data': {
+'type': 'Feature',
+'geometry': {
+'type': 'Polygon',
+// These coordinates outline West Africa HRA.
+'coordinates': [
+[
+[46, -1.5],//Position B
+[49.5, 1.0],//Position C
+[55, 9.0],//Position D
+[57.5, 14.3333333],//Position E
+[53, 16.625928],//Position F
+[52.518271, 16.450095],
+[52.243862, 16.207012],
+[52.217883, 15.633966],
+[49.120156, 14.528027],
+[48.688687, 14.050767],
+[48.050539, 14.065110],
+[47.355508, 13.658253],
+[46.680919, 13.449589],
+[45.699699, 13.375022],
+[45.393068, 13.111367],
+[44.820689, 12.772680],
+[44.560053, 12.822516],
+[44.416958, 12.687937],
+[43.916127, 12.618127],
+[43.517350, 12.691136],//BAM
+[42.893780, 15],//Position G
+[40.553660, 15],//Position H
+[43.136932, 12.713622],//Border Eritrea & Djibouti
+[43.258683, 11.460652],//Position I
+[44.447755, 10.399704],
+[51.283016, 11.832342],
+[50.849696, 9.464988],
+[49.070717, 6.259478],
+[48.851387, 5.831395],
+[48.184307, 4.879475],
+[47.636834, 4.127003],
+[46.319428, 2.766787],
+[46.007205, 2.431556],
+[45.326860, 2.016274],
+[43.153147, 0.297922],
+[41.559696, -1.667050]//Position A
+]
+]
+}
+}
+});
+ 
+// Add a new layer to visualize the polygon.
+map.addLayer({
+'id': 'hra',
+'type': 'fill',
+'source': 'hra', // reference the data source
+'layout': {},
+'paint': {
+'fill-color': '#C3B1E1', // pastel purple color fill
+'fill-opacity': 0.3
+}
+});
+// Add a purple outline around the polygon.
+map.addLayer({
+'id': 'outline',
+'type': 'line',
+'source': 'hra',
+'layout': {},
+'paint': {
+'line-color': '#C3B1E1',
+'line-width': 2
+}
+});
+*/
+ 
+map.addLayer({
+id: 'clusters',
+type: 'circle',
+source: 'data',
+filter: ['has', 'point_count'],
+paint: {
+'circle-color': [
+'step',
+['get', 'point_count'],
+'#a6a6a6', 20,'#828282', 40,'#5f5f60', 60,'#3f3f40', 100,'#212122'
+],
+'circle-radius': [
+'step',
+['get', 'point_count'],
+20, 20,22, 40,25, 60,30, 100,35
+]
+}
+});
+ 
+map.addLayer({
+id: 'cluster-count',
+type: 'symbol',
+source: 'data',
+filter: ['has', 'point_count'],
+layout: {
+'text-field': '{point_count_abbreviated}',
+'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+'text-size': 12,
+'text-allow-overlap': true
+},
+paint: {
+    'text-color': [
+'step',
+['get', 'point_count'],
+'#000000', 60,'#ffffff'
+],}
+});
+ 
+map.addLayer({
+id: 'unclustered-point',
+type: 'circle',
+source: 'data',
+filter: ['!', ['has', 'point_count']],
+paint: {
+    'circle-radius': {
+    'base': 3.75,
+    'stops': [
+    [4, 7],
+    [15, 90]
+    ]
+    },
+    'circle-color': [
+    'match',
+    ['get', 'Type'],
+    'Piracy','#F82B60', 
+    'Sighting', 
+    '#FF6F2C', 
+    'Smuggling', 
+    '#20C933', 
+    'Suspicious Approach', 
+    '#FF6F2C', 
+    'Other', 
+    '#2D7FF9', 
+    'Military Action', 
+    '#F82B60', 
+    '#ff0000'
+    ],
+}
+});
+
+map.on('click', 'clusters', (e) => {
+const features = map.queryRenderedFeatures(e.point, {
+layers: ['clusters']
+});
+const clusterId = features[0].properties.cluster_id;
+map.getSource('data').getClusterExpansionZoom(
+clusterId,
+(err, zoom) => {
+if (err) return;
+ 
+map.easeTo({
+center: features[0].geometry.coordinates,
+zoom: zoom
+});
+}
+);
+});
+
+const popup = new mapboxgl.Popup({
+    //closeButton: false,
+    //closeOnClick: false,
+    className: 'popups'
+});
+
+map.on('mouseenter', 'unclustered-point', (e) => {
+map.getCanvas().style.cursor = 'pointer';
+const coordinates = e.features[0].geometry.coordinates.slice();
+
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+featureid = e.features[0].id
+map.setFeatureState({source: 'data',id: e.features[0].id},{visiblee:true});
+popupDescr = e.features[0].properties.Description;
+popup.setLngLat(coordinates).setHTML('<p><strong>Date: </strong>' + e.features[0].properties.Date + '<br>' + '<strong>Description: </strong>' + popupDescr.substr(0, 125) + '…<br><a href="' + e.features[0].properties.URL + '" target="_top">View Details</a></p>').addTo(map);
+
+});
+
+map.on('mouseleave', 'unclustered-point', (e) => {
+map.getCanvas().style.cursor = '';
+
+map.setFeatureState({source: 'data',id: featureid},{visiblee:false});
+//popup.remove();
+
+});
+
+const easingFunctions = {
+// start slow and gradually increase speed
+easeInCubic: function (t) {
+return t * t * t;
+},
+// start fast with a long, slow wind-down
+easeOutQuint: function (t) {
+return 1 - Math.pow(1 - t, 5);
+},
+// slow start and finish with fast middle
+easeInOutCirc: function (t) {
+return t < 0.5
+? (1 - Math.sqrt(1 - Math.pow(2 * t, 2))) / 2
+: (Math.sqrt(1 - Math.pow(-2 * t + 2, 2)) + 1) / 2;
+},
+// fast start with a "bounce" at the end
+easeOutBounce: function (t) {
+const n1 = 7.5625;
+const d1 = 2.75;
+ 
+if (t < 1 / d1) {
+return n1 * t * t;
+} else if (t < 2 / d1) {
+return n1 * (t -= 1.5 / d1) * t + 0.75;
+} else if (t < 2.5 / d1) {
+return n1 * (t -= 2.25 / d1) * t + 0.9375;
+} else {
+return n1 * (t -= 2.625 / d1) * t + 0.984375;
+}
+}
+};
+
+const easingFn = easingFunctions['easeOutQuint'];
+
+map.on('click', 'unclustered-point', (e) => {
+const coordinates = e.features[0].geometry.coordinates.slice();
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+
+features1 = map.querySourceFeatures('data');
+
+for (let i = 0; i <= features1.length-1; i++) {
+    map.setFeatureState({source: 'data',id: features1[i].id},{visiblee1:false});
+}
+
+featureid = e.features[0].id
+map.setFeatureState({source: 'data',id: e.features[0].id},{visiblee1:true});
+
+map.flyTo({
+center: coordinates,
+duration: 2000,
+easing: easingFn,
+animate: true,
+curve:2,
+essential: true
+});
+
+urlsplit = e.features[0].properties.URL.split(",");
+urls='';
+
+});
+
+ 
+map.on('mouseenter', 'clusters', () => {
+map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'clusters', () => {
+map.getCanvas().style.cursor = '';
+});
+});
+
+
+function forwardGeocoder(query) {
+const matchingFeatures = [];
+for (const feature of obj.features) {
+if (
+feature.properties.Header
+.toLowerCase()
+.includes(query.toLowerCase())
+) {
+feature['place_name'] = `${feature.properties.Header}`;
+feature['center'] = feature.geometry.coordinates;
+matchingFeatures.push(feature);
+}
+}
+return matchingFeatures;
+}
+
+var geocoder = new MapboxGeocoder({
+    accessToken:mapboxgl.accessToken,
+    mapboxgl:mapboxgl,
+    origin:"https://api.mapbox.com",
+    localGeocoderOnly: true,
+    marker:false,
+    localGeocoder: forwardGeocoder,
+    zoom:7,
+    placeholder:"Search Incident",
+    limit:10,
+    countries:"in",
+    bbox:[68.1766451354,7.96553477623,97.4025614766,35.4940095078]
+})
+
+map.addControl(geocoder);
+map.addControl(new mapboxgl.NavigationControl());
+map.addControl(new mapboxgl.FullscreenControl());
+
+
+geocoder.on('result', function(results) {
+   console.log(results);
+})
+
+    });
+
+</script>
+
+</body>
+</html>
