@@ -242,7 +242,7 @@ async function fetchDataAndAddToMap(map) {
                 regions(id, name), 
                 alert_types(name, color)
                 `)
-            .eq('region', 'Europe');
+            .eq('regions.name', 'Europe');
 
         if (error) {
             console.error('Supabase error', error);
