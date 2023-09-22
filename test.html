@@ -238,7 +238,7 @@ async function fetchDataAndAddToMap(map) {
             return;
         }*/
 
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents?select=position,date,description,header,details_url_absolute,regions!inner(*),alert_types!inner(*)&regions.name=eq.${titleCase(getRegionNameFromURL())}`, {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents?select=position,date,description,header,details_url_absolute,regions(name),alert_types(name,color)&regions.name=eq.${titleCase(getRegionNameFromURL())}`, {
             headers: {
                 'apikey': SUPABASE_API_KEY,
                 'Authorization': `Bearer ${SUPABASE_API_KEY}`,
