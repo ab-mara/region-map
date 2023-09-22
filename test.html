@@ -223,7 +223,7 @@ function addMapLayers(map) {
 // Function to fetch data from Supabase and add it to the map
 async function fetchDataAndAddToMap(map) {
     try {
-        /*// Initialize Supabase client
+        // Initialize Supabase client
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
             db: { schema: 'airtable' }
@@ -232,15 +232,24 @@ async function fetchDataAndAddToMap(map) {
         // Function to fetch data from Supabase
         const { data, error } = await supabaseClient
             .from('incidents')
-            .select('position, date, description, header, details_url_absolute, regions!inner(*), alert_types!inner(*)')
-            .eq('regions.name', 'Indian Ocean');
+            .select(`
+                alert_id, 
+                position, 
+                date, 
+                description, 
+                header, 
+                details_url_absolute, 
+                regions(name), 
+                alert_types(name, color)
+                `)
+            .eq('regions.name', regionTitleCase);
 
         if (error) {
             console.error('Supabase error', error);
             return;
-        }*/
+        }
 
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents?select=alert_id,position,date,description,header,details_url_absolute,regions(name),alert_types(name,color)`, {
+        /*const response = await fetch(`${SUPABASE_URL}/rest/v1/incidents?select=alert_id,position,date,description,header,details_url_absolute,regions(name),alert_types(name,color)`, {
             headers: {
                 'apikey': SUPABASE_API_KEY,
                 'Authorization': `Bearer ${SUPABASE_API_KEY}`,
@@ -252,7 +261,7 @@ async function fetchDataAndAddToMap(map) {
             throw new Error('Network response was not ok');
         }
 
-        const data = await response.json();
+        const data = await response.json();*/
 
         console.log('Supabase data', data);
 
@@ -267,7 +276,6 @@ async function fetchDataAndAddToMap(map) {
                 const type = record.alert_types ? record.alert_types.name : null;
                 const region = record.regions ? record.regions.name : null;
 
-                if (regionTitleCase === region) {
                     geojsonFeatures.push({
                         type: 'Feature',
                         geometry: {
@@ -286,7 +294,6 @@ async function fetchDataAndAddToMap(map) {
                             URL: url
                         }
                     });
-                }
             }
         });
 
