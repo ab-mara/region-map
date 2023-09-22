@@ -263,6 +263,7 @@ async function fetchDataAndAddToMap(map) {
                 const header = record.header;
                 const url = record.details_url_absolute;
                 const type = record.alert_types ? record.alert_types.name : null;
+                const region = record.regions ? record.regions.name : null;
 
                 geojsonFeatures.push({
                     type: 'Feature',
@@ -274,6 +275,7 @@ async function fetchDataAndAddToMap(map) {
                         ID: record.alert_id,
                         Header: header,
                         Date: record.date.substring(0, 10),
+                        Region: region,
                         Longitude: parseFloat(itemLatLongsplit[1]),
                         Latitude: parseFloat(itemLatLongsplit[0]),
                         Description: description,
@@ -311,9 +313,9 @@ async function fetchDataAndAddToMap(map) {
 function setupMap() {
     mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
     const regionName = getRegionNameFromURL();
-    console.log("Region name: ", getRegionNameFromURL());
+    //console.log("Region name: ", getRegionNameFromURL());
     const regionSettings = getLocationSettings(regionName);
-    console.log("Region settings: ", regionSettings);
+    //console.log("Region settings: ", regionSettings);
 
     const map = new mapboxgl.Map({
         container: 'map',
