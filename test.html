@@ -324,6 +324,41 @@ async function fetchDataAndAddToMap(map) {
 
         // Add map layers, interactions, and controls as before
         addMapLayers(map);
+
+        // Add geocoder
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            marker: false,
+            flyTo: {
+                bearing: 0,
+                speed: 0.5,
+                curve: 1,
+                easing: function (t) {
+                    return t;
+                }
+            },
+            placeholder: 'Search incidents',
+            localGeocoder: function (query) {
+                const matchingFeatures = [];
+                for (const feature of geojsonObject.features) {
+                        if (
+                        feature.properties.Header
+                        .toLowerCase()
+                        .includes(query.toLowerCase())
+                    ) {
+                        feature['place_name'] = `${feature.properties.Header}`;
+                        feature['center'] = feature.geometry.coordinates;
+                        matchingFeatures.push(feature);
+                    }
+                }
+                return matchingFeatures;
+                console.log("matchingFeatures: ", matchingFeatures);
+            },
+            countries: 'in',
+            limit: 10
+        });
+        
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -350,40 +385,6 @@ function setupMap() {
 
         // Fetch data from Supabase and add it to the map
         fetchDataAndAddToMap(map);
-    });
-
-    // Add geocoder with custom local geocoder function and pass geojsonObject as a parameter
-    const geocoder = new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-        mapboxgl: mapboxgl,
-        marker: false,
-        flyTo: {
-            bearing: 0,
-            speed: 0.5,
-            curve: 1,
-            easing: function (t) {
-                return t;
-            }
-        },
-            placeholder: 'Search incidents',
-            localGeocoder: function (query, callback, context) {
-                const matchingFeatures = [];
-                for (const feature of context.geojsonObject.features) {
-                    if (
-                            feature.properties.Header
-                                .toLowerCase()
-                                .includes(query.toLowerCase())
-                        ) {
-                            feature['place_name'] = `${feature.properties.Header}`;
-                            feature['center'] = feature.geometry.coordinates;
-                            matchingFeatures.push(feature);
-                        }
-                    }
-                    callback(matchingFeatures); // Call the callback function with matching features
-            },
-            countries: 'us',
-            limit: 10,
-            context: { geojsonObject } // Pass geojsonObject as a context parameter
     });
 
     // Add controls to the map
