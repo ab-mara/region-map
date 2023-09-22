@@ -245,6 +245,8 @@ async function fetchDataAndAddToMap(map) {
                 alert_types!inner(name, color)
                 `)
             .eq('regions.name', regionTitleCase)
+            .eq('publish', true)
+            .eq('domain', 'Maritime')
 
         if (error) {
             console.error('Supabase error', error);
