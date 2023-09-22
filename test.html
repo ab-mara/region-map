@@ -380,11 +380,11 @@ function setupMap() {
                 }
             }
             return matchingFeatures;
-            console.log("matchingFeatures: ", matchingFeatures);
         },
         countries: 'in',
         limit: 10
-    });*/
+    });
+    console.log("matchingFeatures: ", matchingFeatures);
 
     // Add controls to the map
     map.addControl(geocoder, 'top-right');
