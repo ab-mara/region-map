@@ -274,6 +274,8 @@ async function fetchDataAndAddToMap(map) {
         data.forEach((record) => {
             const itemLatLongsplit = record.position.split(",");
             if (record.position) {
+                const alertId = record.alert_id;
+                const date = record.date.substring(0, 10);
                 const description = record.description;
                 const header = record.header;
                 const url = record.details_url_absolute;
@@ -289,7 +291,7 @@ async function fetchDataAndAddToMap(map) {
                         properties: {
                             ID: record.alert_id,
                             Header: header,
-                            Date: record.date.substring(0, 10),
+                            Date: date,
                             Region: region,
                             Longitude: parseFloat(itemLatLongsplit[1]),
                             Latitude: parseFloat(itemLatLongsplit[0]),
