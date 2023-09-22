@@ -358,7 +358,12 @@ async function fetchDataAndAddToMap(map) {
             countries: 'in',
             limit: 10
         });
-        
+
+        // Add controls to the map
+        map.addControl(geocoder, 'top-right');
+        map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -386,11 +391,6 @@ function setupMap() {
         // Fetch data from Supabase and add it to the map
         fetchDataAndAddToMap(map);
     });
-
-    // Add controls to the map
-    map.addControl(geocoder, 'top-right');
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-    map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 
     // Remove Mapbox logo and attribution
     const attribInner = document.querySelector('.mapboxgl-ctrl-attrib-inner');
