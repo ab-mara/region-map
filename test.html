@@ -205,7 +205,7 @@ function addMapLayers(map) {
             .setHTML(`
             <p><b>Alert ID: </b>${propertiesID}</p>
             <p><b>Date: </b>${propertiesDate}</p>
-            <p>${propertiesDescription.substr(0, 125)}</p>
+            <p>${propertiesDescription.substr(0, 200)}&#8230;</p>
             `)
             .addTo(map);
     });
