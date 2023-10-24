@@ -7,6 +7,8 @@
     <!-- Mapbox CSS and JavaScript -->
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <!--Supabase JavaScript SDK-->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* Set the map container size */
         body { margin: 0; padding: 0; }
@@ -18,13 +20,19 @@
     <div id="map"></div>
 
     <script>
-        // Constants
-        const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+        // Import Supabase Client
+        const { createClient } = supabase;
+
+        // Initialize Supabase Client
         const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
         const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
-        
-        mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
-        
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
+            schema: 'airtable' // Adjust the schema if needed
+        });
+
+        // Initialize Mapbox
+        mapboxgl.accessToken = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+
         // Initialize the map
         const map = new mapboxgl.Map({
             container: 'map',
@@ -32,31 +40,34 @@
             center: [0, 0], // Initial map center
             zoom: 1 // Initial zoom level
         });
-        
+
         map.on('load', async () => {
             try {
-                // Initialize Supabase client
-                const { createClient } = supabase;
-                const supabaseClient = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
-                    schema: 'airtable'
-                });
-
-                // Function to fetch data from Supabase
+                // Fetch data from Supabase
                 const { data, error } = await supabaseClient
                     .from('incidents')
                     .select(`
-                        latitude,
-                        longitude,
-                        date, 
+                        publish,
+                        domain,
+                        alert_id,
+                        position,
+                        date,
+                        description,
+                        header,
+                        details_url_absolute,
+                        regions!inner(name),
                         alert_types!inner(name, color)
-                        `)
+                    `)
+                    .eq('regions.name', regionTitleCase)
                     .eq('publish', true)
-                    .eq('domain', 'Maritime')
+                    .eq('domain', 'Maritime');
 
-                    if (error) {
-                        console.error('Supabase error', error);
-                        return;
-                    }
+                if (error) {
+                    console.error('Supabase error', error);
+                    return;
+                }
+
+                console.log('Supabase data', data);
 
                 // Create a GeoJSON object from the data
                 const geojson = {
@@ -65,14 +76,14 @@
                         type: 'Feature',
                         geometry: {
                             type: 'Point',
-                            coordinates: [incident.longitude, incident.latitude]
+                            coordinates: incident.position
                         },
                         properties: {
                             date: incident.date
                         }
                     }))
                 };
-        
+
                 // Add a heatmap layer
                 map.addLayer({
                     id: 'heatmap',
@@ -105,11 +116,11 @@
                         'heatmap-radius': 20
                     }
                 });
-        
+
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error fetching data:', error);
             }
         });
-        </script>        
+    </script>
 </body>
 </html>
