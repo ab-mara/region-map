@@ -331,17 +331,12 @@ async function fetchDataAndAddToMap(map) {
 
 // Function to set up map and event listeners
 function setupMap() {
-    mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
-    const regionName = 'Indian Ocean';
-    //console.log("Region name: ", getRegionNameFromURL());
-    const regionSettings = getLocationSettings(regionName);
-    //console.log("Region settings: ", regionSettings);
 
     const map = new mapboxgl.Map({
         container: 'map',
-        style: regionSettings.style,
-        center: regionSettings.center,
-        zoom: regionSettings.zoom,
+        style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8?optimize=true',
+        center: [0, 0],
+        zoom: 1
     });
 
     map.on('load', () => {
