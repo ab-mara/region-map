@@ -71,21 +71,40 @@
 
                 console.log('Supabase data', data);
 
-                const itemLatLongsplit = data.position.split(",");
+                const geojsonFeatures = [];
+
+                data.forEach((record) => {
+                    const itemLatLongsplit = record.position.split(",");
+                    if (record.position) {
+                        const alertId = record.alert_id;
+                        const date = record.date.substring(0, 10);
+                        const description = record.description;
+                        const header = record.header;
+
+                            geojsonFeatures.push({
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [parseFloat(itemLatLongsplit[1]), parseFloat(itemLatLongsplit[0])]
+                                },
+                                properties: {
+                                    ID: record.alert_id,
+                                    Header: header,
+                                    Date: date,
+                                    Longitude: parseFloat(itemLatLongsplit[1]),
+                                    Latitude: parseFloat(itemLatLongsplit[0]),
+                                    Description: description
+                                }
+                            });
+                    }
+                });
+
+                console.log("geojsonFeatures: ", geojsonFeatures);
 
                 // Create a GeoJSON object from the data
                 const geojson = {
                     type: 'FeatureCollection',
-                    features: data.map(incident => ({
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: [parseFloat(itemLatLongsplit[1]), parseFloat(itemLatLongsplit[0])]
-                        },
-                        properties: {
-                            date: incident.date
-                        }
-                    }))
+                    features: geojsonFeatures
                 };
 
                 // Add a heatmap layer
