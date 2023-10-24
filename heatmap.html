@@ -49,7 +49,7 @@
                 // Calculate the date one month ago from now
                 const oneMonthAgo = new Date();
                 oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-                
+
                 // Fetch data from Supabase
                 const { data, error } = await supabaseClient
                     .from('incidents')
@@ -57,17 +57,13 @@
                         publish,
                         domain,
                         alert_id,
-                        position_reversed,
+                        position,
                         date,
                         description,
-                        header,
-                        details_url_absolute,
-                        regions!inner(name),
-                        alert_types!inner(name, color)
+                        header
                     `)
                     .lte('date', oneMonthAgo.toISOString()) // Filter for incidents within the past month
-                    .eq('publish', true)
-                    .eq('domain', 'Maritime');
+                    .eq('publish', true) // Filter for published incidents
 
                 if (error) {
                     console.error('Supabase error', error);
@@ -76,6 +72,8 @@
 
                 console.log('Supabase data', data);
 
+                const itemLatLongsplit = incident.position.split(",");
+
                 // Create a GeoJSON object from the data
                 const geojson = {
                     type: 'FeatureCollection',
@@ -83,7 +81,7 @@
                         type: 'Feature',
                         geometry: {
                             type: 'Point',
-                            coordinates: incident.position_reversed
+                            coordinates: [parseFloat(itemLatLongsplit[1]), parseFloat(itemLatLongsplit[0])]
                         },
                         properties: {
                             date: incident.date
