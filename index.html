@@ -269,6 +269,7 @@ async function fetchDataAndAddToMap(map) {
                 regions!inner(name), 
                 alert_types!inner(name, color)
                 `)
+            .eq('regions.name', regionTitleCase)
             .eq('publish', true)
             .eq('domain', 'Maritime')
 
