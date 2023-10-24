@@ -247,6 +247,9 @@ async function fetchDataAndAddToMap(map) {
             clusterRadius: 40
         });
 
+        // Add map layers, interactions, and controls
+        addMapLayers(map);
+
         map.addLayer({
             id: 'heatmap',
             type: 'heatmap',
@@ -342,8 +345,7 @@ function setupMap() {
     });
 
     map.on('load', () => {
-        // Add map layers, interactions, and controls
-        addMapLayers(map);
+        
 
         // Fetch data from Supabase and add it to the map
         fetchDataAndAddToMap(map);
