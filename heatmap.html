@@ -332,6 +332,8 @@ async function fetchDataAndAddToMap(map) {
 // Function to set up map and event listeners
 function setupMap() {
     mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+    const regionSettings = getLocationSettings(regionName);
+    //console.log("Region settings: ", regionSettings);
 
     const map = new mapboxgl.Map({
         container: 'map',
