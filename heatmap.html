@@ -22,7 +22,7 @@
     <script>
         // Define regionTitleCase based on your requirements
         const regionTitleCase = 'Europe'; // Replace 'YourRegionName' with the actual region name you want to query
-        
+
         // Import Supabase Client
         const { createClient } = supabase;
 
@@ -30,7 +30,7 @@
         const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
         const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
-            schema: 'airtable' // Adjust the schema if needed
+            db: { schema: 'airtable' }
         });
 
         // Initialize Mapbox
