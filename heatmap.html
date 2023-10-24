@@ -41,7 +41,7 @@
             container: 'map',
             style: 'mapbox://styles/mara-admin/cld9y9ky3003r01qrm5u614e8?optimize=true', // Choose your map style
             center: [0, 0], // Initial map center
-            zoom: 0 // Initial zoom level
+            zoom: 1 // Initial zoom level
         });
 
         map.on('load', async () => {
@@ -144,7 +144,7 @@
                 console.error('Error fetching data:', error);
             }
         });
-
+        
         // Remove Mapbox logo and attribution
         const attribInner = document.querySelector('.mapboxgl-ctrl-attrib-inner');
         const bottomLeft = document.querySelector('.mapboxgl-ctrl-bottom-left');
