@@ -55,7 +55,6 @@
                     .from('incidents')
                     .select(`
                         publish,
-                        domain,
                         alert_id,
                         position,
                         date,
@@ -72,7 +71,7 @@
 
                 console.log('Supabase data', data);
 
-                const itemLatLongsplit = incident.position.split(",");
+                const itemLatLongsplit = data.position.split(",");
 
                 // Create a GeoJSON object from the data
                 const geojson = {
