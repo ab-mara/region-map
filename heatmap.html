@@ -18,7 +18,12 @@
     <div id="map"></div>
 
     <script>
-        mapboxgl.accessToken = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+        // Constants
+        const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+        const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
+        const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
+        
+        mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
         
         // Initialize the map
         const map = new mapboxgl.Map({
