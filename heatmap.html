@@ -61,7 +61,7 @@
                         regions!inner(name),
                         alert_types!inner(name, color)
                     `)
-                    .eq('regions.name', regionTitleCase)
+                    .lte('date', oneMonthAgo.toISOString()) // Filter for incidents within the past month
                     .eq('publish', true)
                     .eq('domain', 'Maritime');
 
