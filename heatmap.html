@@ -46,6 +46,10 @@
 
         map.on('load', async () => {
             try {
+                // Calculate the date one month ago from now
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+                
                 // Fetch data from Supabase
                 const { data, error } = await supabaseClient
                     .from('incidents')
