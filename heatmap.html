@@ -144,6 +144,16 @@
                 console.error('Error fetching data:', error);
             }
         });
+        
+        // Remove Mapbox logo and attribution
+        const attribInner = document.querySelector('.mapboxgl-ctrl-attrib-inner');
+        const bottomLeft = document.querySelector('.mapboxgl-ctrl-bottom-left');
+        if (attribInner) {
+            attribInner.parentNode.removeChild(attribInner);
+        }
+        if (bottomLeft) {
+            bottomLeft.parentNode.removeChild(bottomLeft);
+        }
     </script>
 </body>
 </html>
