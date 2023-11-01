@@ -53,7 +53,7 @@
                     .select(`
                     created,
                     country,
-                    COUNT(*) as count
+                    securitythreatlevel
                     `)
                     .gte('created', twoWeeksAgo.toISOString()) // Filter for incidents within the past two weeks
     
@@ -80,7 +80,7 @@
                         if (countryData) {
                             feature.properties.data = countryData;
                         } else {
-                            feature.properties.data = { count: 0 }; // Set a default value if no data found
+                            feature.properties.data = { securitythreatlevel: 0 }; // Set a default value if no data found
                         }
                         return feature;
                     })
@@ -96,18 +96,18 @@
                         'fill-color': [
                             'interpolate',
                             ['linear'],
-                            ['get', 'count'],
+                            ['get', 'securitythreatlevel'],
                             0,
                             'rgba(33,102,172,0)',
-                            10,
+                            1,
                             'rgb(103,169,207)',
-                            50,
+                            2,
                             'rgb(209,229,240)',
-                            100,
+                            3,
                             'rgb(253,219,199)',
-                            200,
+                            4,
                             'rgb(239,138,98)',
-                            500,
+                            5,
                             'rgb(178,24,43)'
                         ],
                         'fill-opacity': 0.7
