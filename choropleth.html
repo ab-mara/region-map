@@ -43,11 +43,18 @@
     
         map.on('load', async () => {
             try {
+                // Calculate the date two weeks ago from now
+                const twoWeeksAgo = new Date();
+                twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
                 // Fetch data from Supabase
                 const { data, error } = await supabaseClient
                     .from('daily_hot_spots')
-                    .select('country, COUNT(*) as count')
-                    .group('country');
+                    .select(`
+                    created,
+                    country,
+                    `)
+                    .gte('created', twoWeeksAgo.toISOString()) // Filter for incidents within the past two weeks
     
                 if (error) {
                     console.error('Supabase error', error);
