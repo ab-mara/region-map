@@ -82,7 +82,7 @@
                         const countryName = item.country;
 
                         // Find the corresponding feature in the GeoJSON data
-                        const countryFeature = sourceData.features.find(feature => feature.properties.name === countryName);
+                        const countryFeature = sourceData.features.find(feature => feature.properties.ADMIN === countryName);
 
                         if (countryFeature) {
                         return {
