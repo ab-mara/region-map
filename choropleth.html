@@ -52,7 +52,7 @@
                     .from('daily_hot_spots')
                     .select(`
                     created,
-                    country,
+                    country
                     `)
                     .gte('created', twoWeeksAgo.toISOString()) // Filter for incidents within the past two weeks
     
