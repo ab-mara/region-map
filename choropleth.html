@@ -48,11 +48,12 @@
                 twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
 
                 // Fetch data from Supabase
-                const { data, error } = await supabaseClient
+                const { data: supabaseData, error } = await supabaseClient
                     .from('daily_hot_spots')
                     .select(`
                     created,
-                    country
+                    country,
+                    COUNT(*) as count
                     `)
                     .gte('created', twoWeeksAgo.toISOString()) // Filter for incidents within the past two weeks
     
@@ -63,10 +64,26 @@
     
                 console.log('Supabase data', data);
     
-                // Load GeoJSON data for countries (replace 'countries.geojson' with your GeoJSON file)
+                // Load GeoJSON data for countries
                 map.addSource('countries', {
                     type: 'geojson',
                     data: 'https://datahub.io/core/geo-countries/r/0.geojson'
+                });
+
+                // Perform a data join between Supabase data and GeoJSON data
+                map.getSource('countries').setData({
+                    type: 'FeatureCollection',
+                    features: geojsonData.features.map((feature) => {
+                        const countryName = feature.properties.name; // Replace with the actual property name in your GeoJSON
+                        const countryData = supabaseData.find((data) => data.country === countryName);
+
+                        if (countryData) {
+                            feature.properties.data = countryData;
+                        } else {
+                            feature.properties.data = { count: 0 }; // Set a default value if no data found
+                        }
+                        return feature;
+                    })
                 });
     
                 // Add a choropleth layer
@@ -113,7 +130,7 @@
         }
     
         // Disable map zoom when using scroll
-        map.scrollZoom.disable();
+        //map.scrollZoom.disable();
     </script>
 </body>
 </html>
