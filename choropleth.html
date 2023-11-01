@@ -98,7 +98,8 @@
                         console.warn(`Country '${countryName}' not found in the GeoJSON data.`);
                         return null;
                         }
-                    }).filter(Boolean); // Remove null entries
+                    }).filter(Boolean) // Remove null entries
+                    };
 
                     // Remove the existing countries source and layer
                     map.removeLayer('choropleth');
@@ -106,32 +107,31 @@
 
                     // Add a new source for the GeoJSON data
                     map.addSource('supabase-countries', {
-                        type: 'geojson',
-                        data: geoJSONData
+                    type: 'geojson',
+                    data: geoJSONData
                     });
 
                     // Add a new choropleth layer based on the 'securitythreatlevel' in the GeoJSON data
                     map.addLayer({
-                        id: 'supabase-choropleth',
-                        type: 'fill',
-                        source: 'supabase-countries',
-                        layout: {},
-                        paint: {
+                    id: 'supabase-choropleth',
+                    type: 'fill',
+                    source: 'supabase-countries',
+                    layout: {},
+                    paint: {
                         'fill-color': [
-                            'interpolate',
-                            ['linear'],
-                            ['get', 'securitythreatlevel'],
-                            0, 'rgba(33,102,172,0)',
-                            1, 'rgb(103,169,207)',
-                            2, 'rgb(209,229,240)',
-                            3, 'rgb(253,219,199)',
-                            4, 'rgb(239,138,98)',
-                            5, 'rgb(178,24,43)'
+                        'interpolate',
+                        ['linear'],
+                        ['get', 'securitythreatlevel'],
+                        0, 'rgba(33,102,172,0)',
+                        1, 'rgb(103,169,207)',
+                        2, 'rgb(209,229,240)',
+                        3, 'rgb(253,219,199)',
+                        4, 'rgb(239,138,98)',
+                        5, 'rgb(178,24,43)'
                         ],
                         'fill-opacity': 0.7
-                        }
-                    });
                     }
+                    });
                 }
                 });
     
