@@ -74,6 +74,8 @@
                 // Get the map's source data
                 const sourceData = map.getSource('countries')._data;
 
+                console.log(sourceData);
+
                 // Process the Supabase data and create a GeoJSON object
                 const geoJSONData = {
                     type: 'FeatureCollection',
