@@ -70,69 +70,69 @@
                     data: 'countries.geojson'
                 });
     
-                map.on('data', () => {
-                // Get the map's source data
-                const sourceData = map.getSource('countries').data;
+                map.on('data', (e) => {
+                if (e.sourceId === 'countries' && e.isSourceLoaded) {
+                    // The 'countries' source is loaded and ready
+                    const sourceData = map.getSource('countries')._data;
 
-                console.log(sourceData);
-
-                // Process the Supabase data and create a GeoJSON object
-                const geoJSONData = {
+                    // Process the Supabase data and create a GeoJSON object
+                    const geoJSONData = {
                     type: 'FeatureCollection',
                     features: supabaseData.map(item => {
-                    const countryName = item.country;
+                        const countryName = item.country;
 
-                    // Find the corresponding feature in the GeoJSON data
-                    const countryFeature = sourceData.features.find(feature => feature.properties.ADMIN === countryName);
+                        // Find the corresponding feature in the GeoJSON data
+                        const countryFeature = sourceData.features.find(feature => feature.properties.name === countryName);
 
-                    if (countryFeature) {
+                        if (countryFeature) {
                         return {
-                        type: 'Feature',
-                        geometry: countryFeature.geometry,
-                        properties: {
+                            type: 'Feature',
+                            geometry: countryFeature.geometry,
+                            properties: {
                             country: countryName,
                             securitythreatlevel: item.securitythreatlevel
-                        }
+                            }
                         };
-                    } else {
+                        } else {
                         // Handle cases where the country isn't found in the GeoJSON data
                         console.warn(`Country '${countryName}' not found in the GeoJSON data.`);
                         return null;
+                        }
+                    }).filter(Boolean); // Remove null entries
+
+                    // Remove the existing countries source and layer
+                    map.removeLayer('choropleth');
+                    map.removeSource('countries');
+
+                    // Add a new source for the GeoJSON data
+                    map.addSource('supabase-countries', {
+                        type: 'geojson',
+                        data: geoJSONData
+                    });
+
+                    // Add a new choropleth layer based on the 'securitythreatlevel' in the GeoJSON data
+                    map.addLayer({
+                        id: 'supabase-choropleth',
+                        type: 'fill',
+                        source: 'supabase-countries',
+                        layout: {},
+                        paint: {
+                        'fill-color': [
+                            'interpolate',
+                            ['linear'],
+                            ['get', 'securitythreatlevel'],
+                            0, 'rgba(33,102,172,0)',
+                            1, 'rgb(103,169,207)',
+                            2, 'rgb(209,229,240)',
+                            3, 'rgb(253,219,199)',
+                            4, 'rgb(239,138,98)',
+                            5, 'rgb(178,24,43)'
+                        ],
+                        'fill-opacity': 0.7
+                        }
+                    });
                     }
-                    }).filter(Boolean) // Remove null entries
-                };
-
-                // Remove the existing countries source and layer
-                map.removeLayer('choropleth');
-                map.removeSource('countries');
-
-                // Add a new source for the GeoJSON data
-                map.addSource('supabase-countries', {
-                    type: 'geojson',
-                    data: geoJSONData
-                });
-
-                // Add a new choropleth layer based on the 'securitythreatlevel' in the GeoJSON data
-                map.addLayer({
-                    id: 'supabase-choropleth',
-                    type: 'fill',
-                    source: 'supabase-countries',
-                    layout: {},
-                    paint: {
-                    'fill-color': [
-                        'interpolate',
-                        ['linear'],
-                        ['get', 'securitythreatlevel'],
-                        0, 'rgba(33,102,172,0)',
-                        1, 'rgb(103,169,207)',
-                        2, 'rgb(209,229,240)',
-                        3, 'rgb(253,219,199)',
-                        4, 'rgb(239,138,98)',
-                        5, 'rgb(178,24,43)'
-                    ],
-                    'fill-opacity': 0.7
-                    }
-                });
+                }
                 });
     
             } catch (error) {
