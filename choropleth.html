@@ -69,22 +69,6 @@
                     type: 'geojson',
                     data: 'countries.geojson'
                 });
-
-                // Perform a data join between Supabase data and GeoJSON data
-                map.getSource('countries').setData({
-                    type: 'FeatureCollection',
-                    features: geojsonData.features.map((feature) => {
-                        const countryName = feature.properties.name; // Replace with the actual property name in your GeoJSON
-                        const countryData = supabaseData.find((data) => data.country === countryName);
-
-                        if (countryData) {
-                            feature.properties.data = countryData;
-                        } else {
-                            feature.properties.data = { securitythreatlevel: 0 }; // Set a default value if no data found
-                        }
-                        return feature;
-                    })
-                });
     
                 // Add a choropleth layer
                 map.addLayer({
