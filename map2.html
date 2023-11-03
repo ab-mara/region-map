@@ -33,29 +33,112 @@
             zoom: 1 // Initial zoom level
         });
 
-        const supabaseData = {
-      "US": 10, // Sample data for the United States
-      "CA": 5,  // Sample data for Canada
-      // Add more country data as needed
-    };
+        // Sample GeoJSON data with "securityThreatLevel" property
+      var geojsonData = {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "properties": {
+              "securityThreatLevel": 2
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [-125.0, 50.0],
+                  [-65.0, 50.0],
+                  [-65.0, 24.6],
+                  [-125.0, 24.6],
+                  [-125.0, 50.0]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {
+              "securityThreatLevel": 4
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [-125.0, 24.6],
+                  [-65.0, 24.6],
+                  [-65.0, 0.0],
+                  [-125.0, 0.0],
+                  [-125.0, 24.6]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {
+              "securityThreatLevel": 1
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [-65.0, 50.0],
+                  [-15.0, 50.0],
+                  [-15.0, 24.6],
+                  [-65.0, 24.6],
+                  [-65.0, 50.0]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "properties": {
+              "securityThreatLevel": 3
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [-65.0, 24.6],
+                  [-15.0, 24.6],
+                  [-15.0, 0.0],
+                  [-65.0, 0.0],
+                  [-65.0, 24.6]
+                ]
+              ]
+            }
+          }
+        ]
+      };
 
-    map.on('load', () => {
-      // Assume your existing Mapbox style has a layer named 'admin-boundaries'
-      // Replace this with the actual layer name in your style
-      const layerId = 'admin-2-boundaries';
+      map.on('load', function () {
+        // Add the GeoJSON data as a source
+        map.addSource('choropleth-source', {
+          type: 'geojson',
+          data: geojsonData,
+        });
 
-      // Style the existing administrative boundaries based on Supabase data
-      map.setPaintProperty(layerId, 'fill-color', [
-        'match',
-        ['get', 'iso_3166_1_alpha_2'], // Replace with the property used for country codes in your style
-        ...Object.keys(supabaseData),
-        ...Object.values(supabaseData),
-        'rgba(0, 0, 0, 0)' // Default color if there's no match
-      ]);
-
-      // Add a legend or other UI elements to display information about the data
-      // You can customize this based on your data and application needs
-    });
+        // Create a choropleth layer
+        map.addLayer({
+          id: 'choropleth-layer',
+          type: 'fill',
+          source: 'choropleth-source',
+          paint: {
+            'fill-color': [
+              'interpolate',
+              ['linear'],
+              ['get', 'securityThreatLevel'],
+              1, 'green',
+              2, 'yellow',
+              3, 'orange',
+              4, 'red',
+              5, 'darkred'
+            ],
+            'fill-opacity': 0.7,
+          },
+        });
+      });x
     </script>
 </body>
 </html>
