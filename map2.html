@@ -32,7 +32,7 @@
             center: [0, 0], // Initial map center
             zoom: 1 // Initial zoom level
         });
-        
+
         const supabaseData = {
       "US": 10, // Sample data for the United States
       "CA": 5,  // Sample data for Canada
@@ -42,7 +42,7 @@
     map.on('load', () => {
       // Assume your existing Mapbox style has a layer named 'admin-boundaries'
       // Replace this with the actual layer name in your style
-      const layerId = 'admin-boundaries';
+      const layerId = 'admin-2-boundaries';
 
       // Style the existing administrative boundaries based on Supabase data
       map.setPaintProperty(layerId, 'fill-color', [
