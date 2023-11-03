@@ -22,7 +22,40 @@
     <div id="map"></div>
 
     <script>
+        // Initialize Mapbox
+        mapboxgl.accessToken = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
+    
+        // Initialize the map
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mara-admin/clina6020001y01p7dm2c8myu?optimize=true', // Choose your map style
+            center: [0, 0], // Initial map center
+            zoom: 1 // Initial zoom level
+        });
         
+        const supabaseData = {
+      "US": 10, // Sample data for the United States
+      "CA": 5,  // Sample data for Canada
+      // Add more country data as needed
+    };
+
+    map.on('load', () => {
+      // Assume your existing Mapbox style has a layer named 'admin-boundaries'
+      // Replace this with the actual layer name in your style
+      const layerId = 'admin-boundaries';
+
+      // Style the existing administrative boundaries based on Supabase data
+      map.setPaintProperty(layerId, 'fill-color', [
+        'match',
+        ['get', 'iso_3166_1_alpha_2'], // Replace with the property used for country codes in your style
+        ...Object.keys(supabaseData),
+        ...Object.values(supabaseData),
+        'rgba(0, 0, 0, 0)' // Default color if there's no match
+      ]);
+
+      // Add a legend or other UI elements to display information about the data
+      // You can customize this based on your data and application needs
+    });
     </script>
 </body>
 </html>
