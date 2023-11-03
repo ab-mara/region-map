@@ -26,6 +26,9 @@
         // Initialize Supabase Client
         const SUPABASE_URL = 'https://txtsljlkvthdlxjesaam.supabase.co';
         const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4dHNsamxrdnRoZGx4amVzYWFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODYyMDk0MjQsImV4cCI6MjAwMTc4NTQyNH0.Ej2zVnCif-7Xe6yQkFX9ln7L1yV7UB8xyZARD1ePQSE';
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
+            db: { schema: 'airtable' }
+        });
     
         // Initialize Mapbox
         mapboxgl.accessToken = 'pk.eyJ1IjoibWFyYS1hZG1pbiIsImEiOiJjbGQ5djVhc3QwOW03M25ucHZzeG92Z2kwIn0.TWD6NPNUnQ4CemIKMCKEpg';
@@ -37,90 +40,14 @@
             center: [0, 0], // Initial map center
             zoom: 1 // Initial zoom level
         });
-
-        // Load the GeoJSON data for countries
-        map.addSource('countries', {
-            type: 'geojson',
-            data: 'countries.geojson'
-        });
-
-        function processSourceData() {
-            const sourceData = map.getSource('countries')._data;
-
-            if (sourceData) {
-                // Process the Supabase data and create a GeoJSON object
-                const geoJSONData = {
-                    type: 'FeatureCollection',
-                    features: supabaseData.map(item => {
-                        const countryName = item.country;
-                        const countryFeature = sourceData.features.find(
-                            feature => feature.properties.ADMIN === countryName
-                        );
-
-                        if (countryFeature) {
-                            return {
-                                type: 'Feature',
-                                geometry: countryFeature.geometry,
-                                properties: {
-                                    country: countryName,
-                                    securitythreatlevel: item.securitythreatlevel
-                                }
-                            };
-                        } else {
-                            console.warn(`Country '${countryName}' not found in the GeoJSON data.`);
-                            return null;
-                        }
-                    }).filter(Boolean)
-                };
-
-                // Remove the existing countries source and layer
-                map.removeLayer('choropleth');
-                map.removeSource('countries');
-
-                // Add a new source for the GeoJSON data
-                map.addSource('supabase-countries', {
-                    type: 'geojson',
-                    data: geoJSONData
-                });
-
-                // Add a new choropleth layer based on the 'securitythreatlevel' in the GeoJSON data
-                map.addLayer({
-                    id: 'supabase-choropleth',
-                    type: 'fill',
-                    source: 'supabase-countries',
-                    layout: {},
-                    paint: {
-                        'fill-color': [
-                            'interpolate',
-                            ['linear'],
-                            ['get', 'securitythreatlevel'],
-                            0, 'rgba(33,102,172,0)',
-                            1, 'rgb(103,169,207)',
-                            2, 'rgb(209,229,240)',
-                            3, 'rgb(253,219,199)',
-                            4, 'rgb(239,138,98)',
-                            5, 'rgb(178,24,43)'
-                        ],
-                        'fill-opacity': 0.7
-                    }
-                });
-            } else {
-                // Retry the process when the data is ready
-                setTimeout(processSourceData, 100);
-            }
-        }
-
-        // Replace this part with your Supabase code to fetch data and call processSourceData
-
-        // Example Supabase code (replace with your actual code)
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_API_KEY, {
-            db: { schema: 'airtable' }
-        });
-
-        // Fetch data from Supabase
-        async function fetchDataFromSupabase() {
+    
+        map.on('load', async () => {
             try {
-                // Your Supabase query here
+                // Calculate the date two weeks ago from now
+                const twoWeeksAgo = new Date();
+                twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+                // Fetch data from Supabase
                 const { data: supabaseData, error } = await supabaseClient
                     .from('daily_hot_spots')
                     .select(`
@@ -129,22 +56,102 @@
                     securitythreatlevel
                     `)
                     .gte('created', twoWeeksAgo.toISOString()) // Filter for incidents within the past two weeks
-
+    
                 if (error) {
                     console.error('Supabase error', error);
                     return;
                 }
-
+    
                 console.log('Supabase data', supabaseData);
+    
+                // Load GeoJSON data for countries
+                map.addSource('countries', {
+                    type: 'geojson',
+                    data: 'countries.geojson'
+                });
+    
+                map.on('data', (e) => {
+                if (e.sourceId === 'countries' && e.isSourceLoaded) {
+                    // The 'countries' source is loaded and ready
+                    const sourceData = map.getSource('countries')._data;
 
-                // Call the data processing function
-                processSourceData();
+                    // Process the Supabase data and create a GeoJSON object
+                    const geoJSONData = {
+                    type: 'FeatureCollection',
+                    features: supabaseData.map(item => {
+                        const countryName = item.country;
+
+                        // Find the corresponding feature in the GeoJSON data
+                        const countryFeature = sourceData.features.find(feature => feature.properties.ADMIN === countryName);
+
+                        if (countryFeature) {
+                        return {
+                            type: 'Feature',
+                            geometry: countryFeature.geometry,
+                            properties: {
+                            country: countryName,
+                            securitythreatlevel: item.securitythreatlevel
+                            }
+                        };
+                        } else {
+                        // Handle cases where the country isn't found in the GeoJSON data
+                        console.warn(`Country '${countryName}' not found in the GeoJSON data.`);
+                        return null;
+                        }
+                    }).filter(Boolean) // Remove null entries
+                    };
+
+                    // Remove the existing countries source and layer
+                    map.removeLayer('choropleth');
+                    map.removeSource('countries');
+
+                    // Add a new source for the GeoJSON data
+                    map.addSource('supabase-countries', {
+                    type: 'geojson',
+                    data: geoJSONData
+                    });
+
+                    // Add a new choropleth layer based on the 'securitythreatlevel' in the GeoJSON data
+                    map.addLayer({
+                    id: 'supabase-choropleth',
+                    type: 'fill',
+                    source: 'supabase-countries',
+                    layout: {},
+                    paint: {
+                        'fill-color': [
+                        'interpolate',
+                        ['linear'],
+                        ['get', 'securitythreatlevel'],
+                        0, 'rgba(33,102,172,0)',
+                        1, 'rgb(103,169,207)',
+                        2, 'rgb(209,229,240)',
+                        3, 'rgb(253,219,199)',
+                        4, 'rgb(239,138,98)',
+                        5, 'rgb(178,24,43)'
+                        ],
+                        'fill-opacity': 0.7
+                    }
+                    });
+                }
+                });
+    
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
+        });
+    
+        // Remove Mapbox logo and attribution
+        const attribInner = document.querySelector('.mapboxgl-ctrl-attrib-inner');
+        const bottomLeft = document.querySelector('.mapboxgl-ctrl-bottom-left');
+        if (attribInner) {
+            attribInner.parentNode.removeChild(attribInner);
         }
-
-        fetchDataFromSupabase();
+        if (bottomLeft) {
+            bottomLeft.parentNode.removeChild(bottomLeft);
+        }
+    
+        // Disable map zoom when using scroll
+        //map.scrollZoom.disable();
     </script>
 </body>
 </html>
