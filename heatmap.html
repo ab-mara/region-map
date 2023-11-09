@@ -59,10 +59,12 @@
                         position,
                         date,
                         description,
-                        header
+                        header,
+                        week
                     `)
-                    .gte('date', oneMonthAgo.toISOString()) // Filter for incidents within the past month
+                    //.gte('date', oneMonthAgo.toISOString()) // Filter for incidents within the past month
                     .eq('publish', true) // Filter for published incidents
+                    .eq('week', '1') // Filter for incidents in the current week
 
                 if (error) {
                     console.error('Supabase error', error);
