@@ -41,12 +41,18 @@ body {
 .mapboxgl-ctrl-geocoder {
       width: clamp(10rem, 30rem, 25vw);
 }
+#year-select {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1;
+}
 </style>
 </head>
 <body>
 
 <div id="map"></div>
-<sl-dropdown>
+<sl-dropdown id="year-select">
     <sl-button slot="trigger" caret>Year</sl-button>
     <sl-menu>
       <sl-menu-item>2023</sl-menu-item>
@@ -287,7 +293,7 @@ async function fetchDataAndAddToMap(map) {
             .eq('regions.name', regionTitleCase)
             .eq('publish', true)
             .eq('domain', 'Maritime')
-            .eq('year', selectedYear)
+            .eq('year', yearSelect)
 
         if (error) {
             console.error('Supabase error', error);
