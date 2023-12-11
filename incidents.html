@@ -12,6 +12,9 @@
 <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
 <!--Supabase JavaScript SDK-->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!--Shoelace-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.12.0/cdn/themes/light.css" />
+<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.12.0/cdn/shoelace-autoloader.js"></script>
 <style>
 body { 
     margin: 0; 
@@ -40,27 +43,43 @@ body {
 }
 .mapboxgl-ctrl-geocoder {
       width: clamp(10rem, 30rem, 25vw);
+      max-width: initial;
 }
-#year-select {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 1;
+.mara-ctrl-group {
+    width: max-content;
+    margin: auto;
+}
+.mara-ctrl-group .mara-ctrl {
+    margin: 0.625rem 0.625rem 0 0; 
+    box-shadow: 0 0 0 2px rgba(0,0,0,.1);
+    border-radius: 4px;
 }
 </style>
 </head>
 <body>
 
 <div id="map"></div>
-<sl-dropdown id="year-select">
-    <sl-button slot="trigger" caret>Year</sl-button>
+<div class="mara-ctrl-group">
+    <sl-dropdown id="region-select" class="mara-ctrl">
+    <sl-button slot="trigger" caret>Region</sl-button>
     <sl-menu>
-      <sl-menu-item>2023</sl-menu-item>
-      <sl-menu-item>2022</sl-menu-item>
-      <sl-menu-item>2021</sl-menu-item>
-      <sl-menu-item>2020</sl-menu-item>
+      <sl-menu-item value="Indian Ocean">Indian Ocean</sl-menu-item>
+      <sl-menu-item value="West Africa">West Africa</sl-menu-item>
+      <sl-menu-item value="Southeast Asia">Southeast Asia</sl-menu-item>
+      <sl-menu-item value="Americas">Americas</sl-menu-item>
+      <sl-menu-item value="Europe">Europe</sl-menu-item>
     </sl-menu>
   </sl-dropdown>
+<sl-dropdown id="year-select" class="mara-ctrl">
+    <sl-button slot="trigger" caret>Year</sl-button>
+    <sl-menu>
+      <sl-menu-item value="2023">2023</sl-menu-item>
+      <sl-menu-item value="2022">2022</sl-menu-item>
+      <sl-menu-item value="2021">2021</sl-menu-item>
+      <sl-menu-item value="2020">2020</sl-menu-item>
+    </sl-menu>
+  </sl-dropdown>
+</div>
 
 <script>
 // Constants
@@ -74,6 +93,30 @@ function getRegionNameFromURL() {
     const urlParams = new URLSearchParams(queryString);
     return urlParams.get('region') ? urlParams.get('region').split('-').join(' ') : 'world';
 }
+
+// Select Year & Region from dropdown menu
+const yearSelect = document.getElementById('year-select');
+const regionSelect = document.getElementById('region-select');
+
+let selectedItemYear = null;
+let selectedItemRegion = null;
+let newDate = null;
+
+  yearSelect.addEventListener('sl-select', event => {
+    selectedItemYear = event.detail.item;
+    console.log("selectedItemYear is:", selectedItemYear.value);
+
+    newDate = new Date(selectedItemYear.value).toISOString();
+    console.log("newDate is:", newDate);
+
+    setupMap();
+  });
+
+  regionSelect.addEventListener('sl-select', event => {
+    selectedItemRegion = event.detail.item;
+    console.log("selectedItemRegion is:", selectedItemRegion.value);
+  });
+
 
 const regionTitleCase = titleCase(getRegionNameFromURL());
 
@@ -265,6 +308,8 @@ function addMapLayers(map) {
     });
 }
 
+const currentYear = new Date().getFullYear();
+
 // Function to fetch data from Supabase and add it to the map
 async function fetchDataAndAddToMap(map) {
     try {
@@ -281,7 +326,6 @@ async function fetchDataAndAddToMap(map) {
                 publish,
                 domain,
                 alert_id, 
-                year,
                 position, 
                 date, 
                 description, 
@@ -293,7 +337,8 @@ async function fetchDataAndAddToMap(map) {
             .eq('regions.name', regionTitleCase)
             .eq('publish', true)
             .eq('domain', 'Maritime')
-            .eq('year', yearSelect)
+            .gte('date', newDate !== null ? newDate : new Date(`${currentYear}-01-01T00:00:00.000Z`).toISOString())
+            .lte('date', newDate !== null ? new Date(`${selectedItemYear.value}-12-31T23:59:59.999Z`).toISOString() : new Date(`${currentYear}-12-31T23:59:59.999Z`).toISOString());
 
         if (error) {
             console.error('Supabase error', error);
@@ -436,6 +481,8 @@ function setupMap() {
 
 // Call setupMap to start the process
 setupMap();
+
+
 
 </script>
 
