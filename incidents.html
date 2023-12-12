@@ -45,6 +45,9 @@ body {
     outline: none;
     border: 0;
 }
+.mapboxgl-ctrl-top-right, .mara-ctrl-group {
+  top: 4rem;
+}
 .mapboxgl-ctrl-group:not(:empty) {
     box-shadow: initial;
 }
@@ -57,11 +60,22 @@ body {
 .mara-ctrl-group {
     width: max-content;
     margin: auto;
+    position: relative;
 }
 .mara-ctrl-group .mara-ctrl {
     margin: 0.625rem 0.625rem 0 0; 
     box-shadow: 0 0 0 2px rgba(0,0,0,.1);
-    border-radius: 4px;
+
+  font-family: Roboto;
+  line-height: 1.4375em;
+  cursor: text;
+  -moz-box-align: center;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgb(158, 158, 158);
+  border-radius: 0.5rem;
 }
 </style>
 </head>
