@@ -311,6 +311,7 @@ function addMapLayers(map) {
 }
 
 const currentYear = new Date().getFullYear();
+const regionNames = ['West Africa', 'Indian Ocean', 'Southeast Asia', 'Europe', 'Americas', 'Asia Pacific'];
 
 // Function to fetch data from Supabase and add it to the map
 async function fetchDataAndAddToMap(map) {
@@ -336,7 +337,7 @@ async function fetchDataAndAddToMap(map) {
                 regions!inner(name), 
                 alert_types!inner(name, color)
                 `)
-            .eq('regions.name', regionTitleCase)
+            .in('regions.name', regionTitleCase ? regionTitleCase : regionNames)
             .eq('publish', true)
             .eq('domain', 'Maritime')
             .gte('date', newDate !== null ? newDate : new Date(`${currentYear}-01-01T00:00:00.000Z`).toISOString())
