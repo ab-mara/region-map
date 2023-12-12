@@ -337,7 +337,7 @@ async function fetchDataAndAddToMap(map) {
                 regions!inner(name), 
                 alert_types!inner(name, color)
                 `)
-            .in('regions.name', regionTitleCase ? regionTitleCase : regionNames)
+            .in('regions.name', regionNames)
             .eq('publish', true)
             .eq('domain', 'Maritime')
             .gte('date', newDate !== null ? newDate : new Date(`${currentYear}-01-01T00:00:00.000Z`).toISOString())
