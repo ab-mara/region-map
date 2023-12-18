@@ -335,7 +335,7 @@ function addMapLayers(map) {
             <b>Date: </b>${propertiesDate}<br>
             <b>Position: </b>${propertiesPosition}<br>
             <b>Type: </b>${propertiesType}<br>
-            <a href="${propertiesURL}">View details</a>
+            <a href="${propertiesURL}" data-alert-id="${propertiesID}">View details</a>
             <!-- ${propertiesDescription.substr(0, 200)}&#8230; -->
             `).addTo(map);
     });
@@ -541,6 +541,20 @@ setupMap();
 <script>
     // Send a message to the parent page
     //window.parent.postMessage('Hello from the iframe!', 'https://mara.atlasbear.co');
+    // Inside the script of the map page (iframe)
+    document.addEventListener('DOMContentLoaded', function () {
+        let detailsLink = document.querySelector('a[data-alert-id]');
+        
+        detailsLink.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            // Get incident ID from the link's data attribute
+            let incidentHref = this.getAttribute('href');
+
+            // Send a message to the parent page with the incident ID
+            window.parent.postMessage({ type: 'openModal', incidentHref: incidentHref }, 'https://mara.atlasbear.co');
+        });
+    });
 </script>
 
 </body>
