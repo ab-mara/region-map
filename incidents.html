@@ -553,10 +553,12 @@ setupMap();
                 event.preventDefault();
 
                 // Get incident ID from the link's data attribute
-                var incidentId = targetLink.getAttribute('data-alert-id');
+                let incidentId = targetLink.getAttribute('data-alert-id');
+                // Get incident URL from the link's href attribute
+                let incidentHref = targetLink.getAttribute('href');
 
                 // Send a message to the parent page with the incident ID
-                window.parent.postMessage({ type: 'openModal', incidentId: incidentId }, 'https://mara.atlasbear.co');
+                window.parent.postMessage({ type: 'openModal', incidentId: incidentId, incidentHref: incidentHref }, 'https://mara.atlasbear.co');
             }
         });
     });
