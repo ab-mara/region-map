@@ -541,22 +541,24 @@ setupMap();
 <script>
     // Send a message to the parent page
     //window.parent.postMessage('Hello from the iframe!', 'https://mara.atlasbear.co');
+    
     // Inside the script of the map page (iframe)
     document.addEventListener('DOMContentLoaded', function () {
-        let detailsLink = document.querySelector('a');
+        let detailsLinks = document.querySelectorAll('a[data-incident-id]');
         
-        detailsLink.addEventListener('click', function (event) {
-            event.preventDefault();
-            alert('Hello from the iframe!');
+        detailsLinks.forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
 
-            // Get incident ID from the link's data attribute
-            let incidentHref = this.getAttribute('href');
+                // Get incident ID from the link's data attribute
+                let incidentId = this.getAttribute('data-incident-id');
 
-            // Send a message to the parent page with the incident ID
-            //window.parent.postMessage({ type: 'openModal', incidentHref: incidentHref }, 'https://mara.atlasbear.co');
-            //window.parent.postMessage(incidentHref, 'https://mara.atlasbear.co');
+                // Send a message to the parent page with the incident ID
+                window.parent.postMessage({ type: 'openModal', incidentId: incidentId }, 'https://mara.atlasbear.co');
+            });
         });
     });
+
 </script>
 
 </body>
