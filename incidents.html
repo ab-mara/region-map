@@ -537,6 +537,10 @@ setupMap();
 
 
 </script>
+<script>
+    // Send a message to the parent page
+    window.parent.postMessage('Hello from the iframe!', 'https://mara.atlasbear.co');
+</script>
 
 </body>
 </html>
