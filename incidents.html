@@ -552,7 +552,8 @@ setupMap();
             let incidentHref = this.getAttribute('href');
 
             // Send a message to the parent page with the incident ID
-            window.parent.postMessage({ type: 'openModal', incidentHref: incidentHref }, 'https://mara.atlasbear.co');
+            //window.parent.postMessage({ type: 'openModal', incidentHref: incidentHref }, 'https://mara.atlasbear.co');
+            window.parent.postMessage(incidentHref, 'https://mara.atlasbear.co');
         });
     });
 </script>
