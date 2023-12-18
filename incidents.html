@@ -320,18 +320,22 @@ function addMapLayers(map) {
         // Show a popup on unclustered point mouseenter
         // Copy properties array
         const properties = e.features[0].properties;
+        const propertiesHeader = properties.Header;
         const propertiesID = properties.ID;
         const propertiesDate = properties.Date;
         const propertiesDescription = properties.Description;
         const propertiesType = properties.Type;
+        const propertiesPosition = properties.Latitude + ", " + properties.Longitude;
         const propertiesURL = properties.URL;
 
         // Create and display a popup with details
         popup.setLngLat(coordinates).setHTML(`
-            <p><b>Alert ID: </b>${propertiesID}</p>
-            <p><b>Date: </b>${propertiesDate}</p>
-            <p><b>Type: </b>${propertiesType}</p>
-            <p>${propertiesDescription.substr(0, 200)}&#8230;</p>
+            <p>${propertiesHeader}<br>
+            <b>Alert ID: </b>${propertiesID}</p>
+            <b>Date: </b>${propertiesDate}<br>
+            <b>Position: </b>${propertiesPosition}</p>
+            <b>Type: </b>${propertiesType}</p>
+            <!-- <p>${propertiesDescription.substr(0, 200)}&#8230;</p> -->
             `).addTo(map);
     });
 
