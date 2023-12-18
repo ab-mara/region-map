@@ -330,12 +330,12 @@ function addMapLayers(map) {
 
         // Create and display a popup with details
         popup.setLngLat(coordinates).setHTML(`
-            <p><b>${propertiesHeader}</b><br>
+            <b>${propertiesHeader}</b><br>
             <b>Alert ID: </b>${propertiesID}<br>
             <b>Date: </b>${propertiesDate}<br>
             <b>Position: </b>${propertiesPosition}<br>
-            <b>Type: </b>${propertiesType}</p>
-            <!-- <p>${propertiesDescription.substr(0, 200)}&#8230;</p> -->
+            <b>Type: </b>${propertiesType}
+            <!-- ${propertiesDescription.substr(0, 200)}&#8230; -->
             `).addTo(map);
     });
 
