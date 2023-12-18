@@ -545,6 +545,7 @@ setupMap();
     // Inside the script of the map page (iframe)
     document.addEventListener('DOMContentLoaded', function () {
         let detailsLinks = document.querySelectorAll('a[data-alert-id]');
+        console.log("detailsLinks: ", detailsLinks);
         
         detailsLinks.forEach(function (link) {
             link.addEventListener('click', function (event) {
