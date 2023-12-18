@@ -547,6 +547,7 @@ setupMap();
         
         detailsLink.addEventListener('click', function (event) {
             event.preventDefault();
+            alert('Hello from the iframe!');
 
             // Get incident ID from the link's data attribute
             let incidentHref = this.getAttribute('href');
