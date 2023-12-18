@@ -544,21 +544,23 @@ setupMap();
 
     // Inside the script of the map page (iframe)
     document.addEventListener('DOMContentLoaded', function () {
-        let detailsLinks = document.querySelectorAll('a[data-alert-id]');
-        console.log("detailsLinks: ", detailsLinks);
-        
-        detailsLinks.forEach(function (link) {
-            link.addEventListener('click', function (event) {
+        // Use event delegation to handle clicks on dynamically created elements
+        document.body.addEventListener('click', function (event) {
+            var targetLink = event.target.closest('a[data-alert-id]');
+
+            // Check if the clicked element is a link with the data-incident-id attribute
+            if (targetLink) {
                 event.preventDefault();
 
                 // Get incident ID from the link's data attribute
-                let incidentId = this.getAttribute('data-alert-id');
+                var incidentId = targetLink.getAttribute('data-alert-id');
 
                 // Send a message to the parent page with the incident ID
                 window.parent.postMessage({ type: 'openModal', incidentId: incidentId }, 'https://mara.atlasbear.co');
-            });
+            }
         });
     });
+
 
 </script>
 
