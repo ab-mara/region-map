@@ -543,7 +543,7 @@ setupMap();
     //window.parent.postMessage('Hello from the iframe!', 'https://mara.atlasbear.co');
     // Inside the script of the map page (iframe)
     document.addEventListener('DOMContentLoaded', function () {
-        let detailsLink = document.querySelector('a[data-alert-id]');
+        let detailsLink = document.querySelector('a');
         
         detailsLink.addEventListener('click', function (event) {
             event.preventDefault();
@@ -553,7 +553,7 @@ setupMap();
 
             // Send a message to the parent page with the incident ID
             //window.parent.postMessage({ type: 'openModal', incidentHref: incidentHref }, 'https://mara.atlasbear.co');
-            window.parent.postMessage(incidentHref, 'https://mara.atlasbear.co');
+            //window.parent.postMessage(incidentHref, 'https://mara.atlasbear.co');
         });
     });
 </script>
