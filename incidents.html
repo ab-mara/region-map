@@ -33,6 +33,14 @@ i.text-center, .subheader svg {
     text-align: center;
     width: 1.25em;
 }
+a[role="button"] {
+    padding: .2rem .4rem;
+    color: #ffffff;
+    background-color: #212529;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: .2rem;
+}
 #map { 
     position: absolute; 
     top: 0; 
@@ -343,7 +351,7 @@ function addMapLayers(map) {
         popup.setLngLat(coordinates).setHTML(`
             <span style="font-size: 1rem;"><b>${propertiesHeader}</b></span><br>
             ${propertiesSubheader}<br>
-            <a href="${propertiesURL}" data-alert-id="${propertiesID}">View details</a>
+            <a href="${propertiesURL}" data-alert-id="${propertiesID}" role="button">View details</a>
             `).addTo(map);
         /*popup.setLngLat(coordinates).setHTML(`
             <span style="font-size: 1rem;"><b>${propertiesHeader}</b></span><br>
