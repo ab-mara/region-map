@@ -37,6 +37,8 @@ a[role="button"] {
     padding: .2rem .4rem;
     color: #ffffff;
     background-color: #212529;
+    display: block;
+    text-align: center;
     text-decoration: none;
     cursor: pointer;
     border-radius: .2rem;
@@ -350,7 +352,7 @@ function addMapLayers(map) {
         // Create and display a popup with details
         popup.setLngLat(coordinates).setHTML(`
             <span style="font-size: 1rem;"><b>${propertiesHeader}</b></span><br>
-            ${propertiesSubheader}<br>
+            ${propertiesSubheader}
             <a href="${propertiesURL}" data-alert-id="${propertiesID}" role="button">View details</a>
             `).addTo(map);
         /*popup.setLngLat(coordinates).setHTML(`
