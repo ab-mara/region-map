@@ -284,8 +284,9 @@ function addMapLayers(map) {
 
     // Create a popup but don't add it to the map yet
     const popup = new mapboxgl.Popup({
-        closeButton: true,
-        closeOnClick: true
+        closeButton: false,
+        closeOnMove: true,
+        maxWidth: 'none',
     });
 
     // Add your existing event listeners here
