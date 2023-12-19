@@ -15,14 +15,19 @@
 <!--Shoelace-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.12.0/cdn/themes/light.css" />
 <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.12.0/cdn/shoelace-autoloader.js"></script>
+<!--Font Awesome-->
+<script src="https://kit.fontawesome.com/30b35f779b.js" crossorigin="anonymous"></script>
 <style>
 :not(:defined) {
     visibility: hidden;
 }
-
 body { 
+    font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
     margin: 0; 
     padding: 0; 
+}
+.monospace {
+    font-family: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", monospace;
 }
 #map { 
     position: absolute; 
@@ -322,6 +327,7 @@ function addMapLayers(map) {
         // Copy properties array
         const properties = e.features[0].properties;
         const propertiesHeader = properties.Header;
+        const propertiesSubheader = properties.Subheader;
         const propertiesID = properties.ID;
         const propertiesDate = properties.Date;
         const propertiesDescription = properties.Description;
@@ -332,13 +338,17 @@ function addMapLayers(map) {
         // Create and display a popup with details
         popup.setLngLat(coordinates).setHTML(`
             <span style="font-size: 1rem;"><b>${propertiesHeader}</b></span><br>
+            ${propertiesSubheader}
+            `).addTo(map);
+        /*popup.setLngLat(coordinates).setHTML(`
+            <span style="font-size: 1rem;"><b>${propertiesHeader}</b></span><br>
             <b>Alert ID: </b>${propertiesID}<br>
             <b>Date: </b>${propertiesDate}<br>
             <b>Position: </b>${propertiesPosition}<br>
             <b>Type: </b>${propertiesType}<br>
             <a href="${propertiesURL}" data-alert-id="${propertiesID}">View details</a>
             <!-- ${propertiesDescription.substr(0, 200)}&#8230; -->
-            `).addTo(map);
+            `).addTo(map);*/
     });
 
     map.on('mouseleave', 'unclustered-point', (e) => {
@@ -385,6 +395,7 @@ async function fetchDataAndAddToMap(map) {
                 description, 
                 header, 
                 details_url_absolute, 
+                subheader,
                 regions!inner(name), 
                 alert_types!inner(name, color)
                 `)
@@ -410,6 +421,7 @@ async function fetchDataAndAddToMap(map) {
                 const date = record.date.substring(0, 10);
                 const description = record.description;
                 const header = record.header;
+                const subheader = record.subheader;
                 const url = record.details_url_absolute;
                 const type = record.alert_types ? record.alert_types.name : null;
                 const region = record.regions ? record.regions.name : null;
@@ -423,6 +435,7 @@ async function fetchDataAndAddToMap(map) {
                         properties: {
                             ID: record.alert_id,
                             Header: header,
+                            Subheader: subheader,
                             Date: date,
                             Region: region,
                             Longitude: parseFloat(itemLatLongsplit[1]),
