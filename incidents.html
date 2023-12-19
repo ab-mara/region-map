@@ -338,7 +338,8 @@ function addMapLayers(map) {
         // Create and display a popup with details
         popup.setLngLat(coordinates).setHTML(`
             <span style="font-size: 1rem;"><b>${propertiesHeader}</b></span><br>
-            ${propertiesSubheader}
+            ${propertiesSubheader}<br>
+            <a href="${propertiesURL}" data-alert-id="${propertiesID}">View details</a>
             `).addTo(map);
         /*popup.setLngLat(coordinates).setHTML(`
             <span style="font-size: 1rem;"><b>${propertiesHeader}</b></span><br>
