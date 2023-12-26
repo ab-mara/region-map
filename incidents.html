@@ -193,7 +193,8 @@ let newDate = null;
   });
 
   regionSelect.addEventListener('sl-input', event => {
-    selectedItemRegion = event.detail.item;
+    //selectedItemRegion = event.detail.item;
+    selectedItemRegion = event.target;
     console.log("selectedItemRegion is:", selectedItemRegion);
 
     // Get the current URL
