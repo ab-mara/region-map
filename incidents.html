@@ -131,7 +131,7 @@ a[role="button"] {
 
 <div id="map"></div>
 <div class="mara-ctrl-group">
-    <!-- <sl-dropdown id="region-select" class="mara-ctrl">
+    <sl-dropdown id="region-select" class="mara-ctrl">
     <sl-button slot="trigger" caret>Region</sl-button>
     <sl-menu>
       <sl-menu-item value="world">World</sl-menu-item>
@@ -141,15 +141,15 @@ a[role="button"] {
       <sl-menu-item value="americas">Americas</sl-menu-item>
       <sl-menu-item value="europe">Europe</sl-menu-item>
     </sl-menu>
-  </sl-dropdown> -->
-  <sl-select id="region-select"  class="mara-ctrl" value="world" placeholder="Region">
+  </sl-dropdown>
+  <!-- <sl-select id="region-select"  class="mara-ctrl">
     <sl-option value="world">World</sl-option>
     <sl-option value="indian-ocean">Indian Ocean</sl-option>
     <sl-option value="west-africa">West Africa</sl-option>
     <sl-option value="southeast-asia">Southeast Asia</sl-option>
     <sl-option value="americas">Americas</sl-option>
     <sl-option value="europe">Europe</sl-option>
-  </sl-select>
+  </sl-select> -->
 <sl-dropdown id="year-select" class="mara-ctrl">
     <sl-button slot="trigger" caret>Year</sl-button>
     <sl-menu>
@@ -193,10 +193,10 @@ let newDate = null;
         setupMap();
   });
 
-  regionSelect.addEventListener('sl-change', event => {
-    //selectedItemRegion = event.detail.item;
-    selectedItemRegion = event.target.value;
-    console.log("selectedItemRegion is:", selectedItemRegion);
+  regionSelect.addEventListener('sl-select', event => {
+    selectedItemRegion = event.detail.item;
+    //selectedItemRegion = event.target.value;
+    console.log("selectedItemRegion is:", selectedItemRegion.value);
 
     // Get the current URL
     let currentUrl = new URL(window.location.href);
@@ -205,8 +205,8 @@ let newDate = null;
     let searchParams = new URLSearchParams(currentUrl.search);
 
     // Add a new parameter (e.g., "key" with value "value")
-    //searchParams.set("region", selectedItemRegion.value);
-    searchParams.set("region", selectedItemRegion);
+    searchParams.set("region", selectedItemRegion.value);
+    //searchParams.set("region", selectedItemRegion);
 
     // Update the URL with the new search parameters
     currentUrl.search = searchParams.toString();
@@ -224,6 +224,10 @@ let newDate = null;
 
 
 const regionTitleCase = titleCase(getRegionNameFromURL());
+
+//const internalInput = regionSelect.shadowRoot.querySelector('[pseudo~="placeholder"]');
+
+//internalInput.textContent = regionTitleCase;
 
 
 
