@@ -198,26 +198,26 @@ let newDate = null;
     console.log("selectedItemRegion is:", selectedItemRegion);
 
     // Get the current URL
-    //let currentUrl = new URL(window.location.href);
+    let currentUrl = new URL(window.location.href);
 
     // Create a new URLSearchParams object based on the existing search parameters
-    //let searchParams = new URLSearchParams(currentUrl.search);
+    let searchParams = new URLSearchParams(currentUrl.search);
 
     // Add a new parameter (e.g., "key" with value "value")
-    //searchParams.set("region", selectedItemRegion.value);
+    searchParams.set("region", selectedItemRegion.value);
 
     // Update the URL with the new search parameters
-    //currentUrl.search = searchParams.toString();
+    currentUrl.search = searchParams.toString();
 
     // Change the URL of the page to the updated URL
-    //window.history.pushState({}, "", currentUrl.href); 
+    window.history.pushState({}, "", currentUrl.href); 
 
     // Use the updated URL as needed
-    //console.log(currentUrl.href);
+    console.log(currentUrl.href);
 
     //setupMap();
     // Force a page reload
-    //location.reload();
+    location.reload();
   });
 
 
