@@ -192,7 +192,7 @@ let newDate = null;
         setupMap();
   });
 
-  regionSelect.addEventListener('sl-change', event => {
+  regionSelect.addEventListener('sl-input', event => {
     selectedItemRegion = event.detail.item;
     console.log("selectedItemRegion is:", selectedItemRegion.value);
 
