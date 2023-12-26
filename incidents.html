@@ -204,7 +204,8 @@ let newDate = null;
     let searchParams = new URLSearchParams(currentUrl.search);
 
     // Add a new parameter (e.g., "key" with value "value")
-    searchParams.set("region", selectedItemRegion.value);
+    //searchParams.set("region", selectedItemRegion.value);
+    searchParams.set("region", selectedItemRegion);
 
     // Update the URL with the new search parameters
     currentUrl.search = searchParams.toString();
