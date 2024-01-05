@@ -153,6 +153,7 @@ a[role="button"] {
 <sl-dropdown id="year-select" class="mara-ctrl">
     <sl-button slot="trigger" caret>Year</sl-button>
     <sl-menu>
+      <sl-menu-item value="2024">2024</sl-menu-item>
       <sl-menu-item value="2023">2023</sl-menu-item>
       <sl-menu-item value="2022">2022</sl-menu-item>
       <sl-menu-item value="2021">2021</sl-menu-item>
@@ -447,7 +448,8 @@ async function fetchDataAndAddToMap(map) {
         // Function to fetch data from Supabase
         const { data, error } = await supabaseClient
             .from('incidents')
-            .select(`
+            .select(
+              `
                 publish,
                 domain,
                 alert_id, 
@@ -459,7 +461,8 @@ async function fetchDataAndAddToMap(map) {
                 subheader,
                 regions!inner(name), 
                 alert_types!inner(name, color)
-                `)
+                `
+            )
             .in('regions.name', regionTitleCase === 'World' ? regionNames : [regionTitleCase])
             .eq('publish', true)
             .eq('domain', 'Maritime')
