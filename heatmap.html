@@ -159,7 +159,10 @@
 
         // disable map zoom when using scroll
         //map.scrollZoom.disable();
-
+        
+        const nav = new mapboxgl.NavigationControl({
+            showCompass: false
+        });
         map.addControl(nav, 'top-right');
     </script>
 </body>
